@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mirth:
+    image: nextgenhealthcare/connect:4.5.2
+    container_name: mirth-server
+    restart: always
+    ports:
+      - "8443:8443" # Puerto para el Administrador (HTTPS)
+      - "8080:8080" # Puerto HTTP
+    environment:
+      # Al no definir DATABASE_URL, Mirth usa Derby por defecto
+      - VMOPTIONS=-Xmx2g
+    volumes:
+      # Es MUY importante este volumen para no perder tus canales al reiniciar
+      - mirth_data:/opt/mirth-connect/appdata
+
+volumes:
+  mirth_data:

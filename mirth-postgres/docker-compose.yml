@@ -1,0 +1,71 @@
+networks:
+  mirth-demo:
+services:
+  postgres-mirth:
+    image: postgres:11
+    container_name: postgres-mirth
+    restart: always
+    networks:
+      - mirth-demo
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_MIRTH_DB_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_MIRTH_DB_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MIRTH_DB_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+      - ./pg_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_MIRTH_DB_USER} -d ${POSTGRES_MIRTH_DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mirth:
+    image: nextgenhealthcare/connect:4.5.2
+    container_name: mirth
+    networks:
+      - mirth-demo
+    env_file:
+      - .env
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "9001:9001"
+      - "9002:9002"
+      - "9003:9003"
+      - "6001:6001"
+      - "6002:6002"
+      - "6003:6003"
+    environment:
+      DATABASE: postgres # postgres, mysql, etc.
+      DATABASE_DRIVER: org.postgresql.Driver
+      DATABASE_URL: jdbc:postgresql://postgres-mirth:5432/${POSTGRES_MIRTH_DB_DATABASE}
+      DATABASE_USERNAME: ${POSTGRES_MIRTH_DB_USER}
+      DATABASE_PASSWORD: ${POSTGRES_MIRTH_DB_PASSWORD}
+      DATABASE_MAX_CONNECTIONS: 50
+    depends_on:
+      postgres-mirth:
+        condition: service_healthy # Depende del healthcheck de postgres
+    volumes:
+      - ./mirth_data:/opt/connect/appdata              # Persistencia de config
+      - ./mirth_logs:/opt/connect/logs                 # Logs persistentes
+      - ./mirth_libs:/opt/connect/custom-lib           # Librerías personalizadas
+      - ./secrets/mirth.properties:/run/secrets/mirth.properties:ro # passwords y otros
+      - ./mirth_files:/data
+
+    healthcheck:
+      test: ["CMD", "curl", "-k", "https://localhost:8443/api/server"]
+      interval: 10s
+      retries: 10
+      start_period: 30s
+      timeout: 5s
