@@ -1,0 +1,335 @@
+<channel version="4.5.2">
+  <id>f5066aba-9341-4927-a952-451a197b076c</id>
+  <nextMetaDataId>2</nextMetaDataId>
+  <name>014 - Canal Base64 Codificador</name>
+  <description>MSH|^~\&amp;|HIS_SYSTEM|HOSPITAL_CENTRAL|LAB_SYSTEM|DEST_FACILITY|20231027103000||ADT^A01^ADT_A01|MSG12345|P|2.5|||AL|NE|UNICODE UTF-8|
+EVN|A01|20231027103000|||OPERADOR_01
+PID|1||123456789^^^MRN^MR||김^철수^金哲秀||19850520|M|||北京市朝阳区太阳宫^^Beijing^BJ^100028^CHN||600123456^^PH|||S|||12345678X|
+PV1|1|I|URG^BOX1^01||||1234^PEREZ^ALBERTO|||||||||||V1001|||||||||||||||||||||||||20231027102500|</description>
+  <revision>13</revision>
+  <sourceConnector version="4.5.2">
+    <metaDataId>0</metaDataId>
+    <name>sourceConnector</name>
+    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
+      <pluginProperties/>
+      <sourceConnectorProperties version="4.5.2">
+        <responseVariable>None</responseVariable>
+        <respondAfterProcessing>true</respondAfterProcessing>
+        <processBatch>false</processBatch>
+        <firstResponse>false</firstResponse>
+        <processingThreads>1</processingThreads>
+        <resourceIds class="linked-hash-map">
+          <entry>
+            <string>Default Resource</string>
+            <string>[Default Resource]</string>
+          </entry>
+        </resourceIds>
+        <queueBufferSize>1000</queueBufferSize>
+      </sourceConnectorProperties>
+    </properties>
+    <transformer version="4.5.2">
+      <elements>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>calcular hash</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>false</enabled>
+          <script>try {
+    var data = connectorMessage.getRawData(); // El contenido que quieres hashear
+    var digest = java.security.MessageDigest.getInstance(&quot;SHA-256&quot;);
+    
+    // Convertimos el string a bytes usando UTF-8
+    var hashBytes = digest.digest(data.getBytes(&quot;UTF-8&quot;));
+    
+    // Convertimos los bytes a formato Hexadecimal (String)
+    var hexString = &quot;&quot;;
+    for (var i = 0; i &lt; hashBytes.length; i++) {
+        var hex = java.lang.Integer.toHexString(0xff &amp; hashBytes[i]);
+        if (hex.length == 1) hexString += &apos;0&apos;;
+        hexString += hex;
+    }
+
+    var finalHash = hexString.toString();
+    
+    // Guardarlo para usarlo en el destino
+    channelMap.put(&quot;messageHash&quot;, finalHash);
+    logger.info(&quot;Hash calculado: &quot; + finalHash);
+
+} catch (e) {
+    logger.error(&quot;Error calculando el hash: &quot; + e);
+}</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>codificador base64 - nativo</name>
+          <sequenceNumber>1</sequenceNumber>
+          <enabled>true</enabled>
+          <script>// Convertimos el String a bytes (puedes especificar el charset si es necesario)
+var rawDataString = connectorMessage.getRawData();
+var bytes = rawDataString.getBytes(&quot;UTF-8&quot;);
+
+
+// Ahora FileUtil sí encontrará el método adecuado
+var encodedMessage = FileUtil.encode(bytes);
+
+msg = {
+    messageId: UUIDGenerator.getUUID(),
+    encodedContent: encodedMessage,
+    hash: generateHash(connectorMessage.getRawData(), &quot;SHA-256&quot;)
+};
+
+logger.info(&quot;encodedMessage=&quot;+ JSON.stringify(msg, null, 2));
+logger.info(&quot;hash1=&quot; + generateHash(rawDataString, &quot;SHA-256&quot;));
+
+
+
+
+/**
+ * Genera un hash a partir de un string de texto
+ * @param {String} input - Texto a procesar
+ * @param {String} algorithm - Ejemplo: &quot;SHA-256&quot;, &quot;MD5&quot;, &quot;SHA-1&quot;
+ * @return {String} Hash en formato hexadecimal
+ */
+function generateHash(input, algorithm) {
+    try {
+        if (!input) return &quot;&quot;;
+        
+        var digest = java.security.MessageDigest.getInstance(algorithm);
+        var hashBytes = digest.digest(input.getBytes(&quot;UTF-8&quot;));
+        
+        var hexString = new java.lang.StringBuilder();
+        for (var i = 0; i &lt; hashBytes.length; i++) {
+            var hex = java.lang.Integer.toHexString(0xff &amp; hashBytes[i]);
+            if (hex.length == 1) hexString.append(&apos;0&apos;);
+            hexString.append(hex);
+        }
+        
+        return hexString.toString();
+    } catch (e) {
+        logger.error(&quot;Error en generateHash: &quot; + e);
+        return null;
+    }
+}</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>codificado base 64 - apache commons</name>
+          <sequenceNumber>2</sequenceNumber>
+          <enabled>false</enabled>
+          <script>var rawDataString = connectorMessage.getRawData();
+var encodedMessage = Packages.org.apache.commons.codec.binary.Base64.encodeBase64String(rawDataString.getBytes(&quot;UTF-8&quot;));
+
+msg = {
+    messageId: UUIDGenerator.getUUID(),
+    encodedContent: encodedMessage
+};</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+      </elements>
+      <inboundTemplate encoding="base64">TVNIfF5+XCZ8SElTX1NZU1RFTXxIT1NQSVRBTF9DRU5UUkFMfExBQl9TWVNURU18REVTVF9GQUNJTElUWXwyMDIzMTAyNzEwMzAwMHx8QURUXkEwMV5BRFRfQTAxfE1TRzEyMzQ1fFB8Mi41fApFVk58QTAxfDIwMjMxMDI3MTAzMDAwfHx8T1BFUkFET1JfQURNClBJRHwxfHwxMjM0NTY3ODleXl5NUk5eTVJ8fEdPTlpBTEVaXkpVQU5eUEVEUk98fDE5ODUwNTIwfE18fHxDQUxMRSBGQUxTQSAxMjNeXk1BRFJJRF5NRF4yODAwMV5FU1B8fDYwMDEyMzQ1Nl5eUEh8fHxTfHx8MTIzNDU2NzhYfApOSzF8MXxHT05aQUxFWl5NQVJJQXxTUE9eU1BPVVNFXkhMNzAwNjN8Q0FMTEUgRkFMU0EgMTIzXl5NQURSSUReTUReMjgwMDFeRVNQfDkxMjM0NTY3OApQVjF8MXxJfFVSR15CT1gxXjAxfHx8fDEyMzReUEVSRVpeQUxCRVJUT3x8fHx8fHx8fHx8VjEwMDF8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8MjAyMzEwMjcxMDI1MDB8CkRHMXwxfEkxMHxLMjEuOV5FbmZlcm1lZGFkIHBvciByZWZsdWpvIGdhc3Ryb2Vzb2bDoWdpY29eSTEwfHwyMDIzMTAyNzEwMzAwMHxGfA==</inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
+      <inboundDataType>HL7V2</inboundDataType>
+      <outboundDataType>JSON</outboundDataType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.2">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2SerializationProperties" version="4.5.2">
+          <handleRepetitions>true</handleRepetitions>
+          <handleSubcomponents>true</handleSubcomponents>
+          <useStrictParser>false</useStrictParser>
+          <useStrictValidation>false</useStrictValidation>
+          <stripNamespaces>false</stripNamespaces>
+          <segmentDelimiter>\r</segmentDelimiter>
+          <convertLineBreaks>true</convertLineBreaks>
+        </serializationProperties>
+        <deserializationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DeserializationProperties" version="4.5.2">
+          <useStrictParser>false</useStrictParser>
+          <useStrictValidation>false</useStrictValidation>
+          <segmentDelimiter>\r</segmentDelimiter>
+        </deserializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2BatchProperties" version="4.5.2">
+          <splitType>MSH_Segment</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+        <responseGenerationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2ResponseGenerationProperties" version="4.5.2">
+          <segmentDelimiter>\r</segmentDelimiter>
+          <successfulACKCode>AA</successfulACKCode>
+          <successfulACKMessage></successfulACKMessage>
+          <errorACKCode>AE</errorACKCode>
+          <errorACKMessage>An Error Occurred Processing Message.</errorACKMessage>
+          <rejectedACKCode>AR</rejectedACKCode>
+          <rejectedACKMessage>Message Rejected.</rejectedACKMessage>
+          <msh15ACKAccept>false</msh15ACKAccept>
+          <dateFormat>yyyyMMddHHmmss.SSS</dateFormat>
+        </responseGenerationProperties>
+        <responseValidationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2ResponseValidationProperties" version="4.5.2">
+          <successfulACKCode>AA,CA</successfulACKCode>
+          <errorACKCode>AE,CE</errorACKCode>
+          <rejectedACKCode>AR,CR</rejectedACKCode>
+          <validateMessageControlId>true</validateMessageControlId>
+          <originalMessageControlId>Destination_Encoded</originalMessageControlId>
+          <originalIdMapVariable></originalIdMapVariable>
+        </responseValidationProperties>
+      </inboundProperties>
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </outboundProperties>
+    </transformer>
+    <filter version="4.5.2">
+      <elements/>
+    </filter>
+    <transportName>Channel Reader</transportName>
+    <mode>SOURCE</mode>
+    <enabled>true</enabled>
+    <waitForPrevious>true</waitForPrevious>
+  </sourceConnector>
+  <destinationConnectors>
+    <connector version="4.5.2">
+      <metaDataId>1</metaDataId>
+      <name>Destination 1</name>
+      <properties class="com.mirth.connect.connectors.vm.VmDispatcherProperties" version="4.5.2">
+        <pluginProperties/>
+        <destinationConnectorProperties version="4.5.2">
+          <queueEnabled>false</queueEnabled>
+          <sendFirst>false</sendFirst>
+          <retryIntervalMillis>10000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>0</retryCount>
+          <rotate>false</rotate>
+          <includeFilterTransformer>false</includeFilterTransformer>
+          <threadCount>1</threadCount>
+          <threadAssignmentVariable></threadAssignmentVariable>
+          <validateResponse>false</validateResponse>
+          <resourceIds class="linked-hash-map">
+            <entry>
+              <string>Default Resource</string>
+              <string>[Default Resource]</string>
+            </entry>
+          </resourceIds>
+          <queueBufferSize>1000</queueBufferSize>
+          <reattachAttachments>true</reattachAttachments>
+        </destinationConnectorProperties>
+        <channelId>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</channelId>
+        <channelTemplate>${message.encodedData}</channelTemplate>
+        <mapVariables/>
+      </properties>
+      <transformer version="4.5.2">
+        <elements/>
+        <inboundDataType>JSON</inboundDataType>
+        <outboundDataType>JSON</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </outboundProperties>
+      </transformer>
+      <responseTransformer version="4.5.2">
+        <elements/>
+        <inboundDataType>JSON</inboundDataType>
+        <outboundDataType>JSON</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </outboundProperties>
+      </responseTransformer>
+      <filter version="4.5.2">
+        <elements/>
+      </filter>
+      <transportName>Channel Writer</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <waitForPrevious>true</waitForPrevious>
+    </connector>
+  </destinationConnectors>
+  <preprocessingScript>// Modify the message variable below to pre process data
+return message;</preprocessingScript>
+  <postprocessingScript>// This script executes once after a message has been processed
+// Responses returned from here will be stored as &quot;Postprocessor&quot; in the response map
+return;</postprocessingScript>
+  <deployScript>// This script executes once when the channel is deployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</deployScript>
+  <undeployScript>// This script executes once when the channel is undeployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</undeployScript>
+  <properties version="4.5.2">
+    <clearGlobalChannelMap>true</clearGlobalChannelMap>
+    <messageStorageMode>DEVELOPMENT</messageStorageMode>
+    <encryptData>false</encryptData>
+    <encryptAttachments>false</encryptAttachments>
+    <encryptCustomMetaData>false</encryptCustomMetaData>
+    <removeContentOnCompletion>false</removeContentOnCompletion>
+    <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
+    <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
+    <initialState>STARTED</initialState>
+    <storeAttachments>true</storeAttachments>
+    <metaDataColumns>
+      <metaDataColumn>
+        <name>SOURCE</name>
+        <type>STRING</type>
+        <mappingName>mirth_source</mappingName>
+      </metaDataColumn>
+      <metaDataColumn>
+        <name>TYPE</name>
+        <type>STRING</type>
+        <mappingName>mirth_type</mappingName>
+      </metaDataColumn>
+    </metaDataColumns>
+    <attachmentProperties version="4.5.2">
+      <type>None</type>
+      <properties/>
+    </attachmentProperties>
+    <resourceIds class="linked-hash-map">
+      <entry>
+        <string>Default Resource</string>
+        <string>[Default Resource]</string>
+      </entry>
+    </resourceIds>
+  </properties>
+  <exportData>
+    <metadata>
+      <enabled>true</enabled>
+      <lastModified>
+        <time>1768789508178</time>
+        <timezone>America/Santiago</timezone>
+      </lastModified>
+      <pruningSettings>
+        <archiveEnabled>true</archiveEnabled>
+        <pruneErroredMessages>false</pruneErroredMessages>
+      </pruningSettings>
+      <userId>1</userId>
+    </metadata>
+    <codeTemplateLibraries/>
+    <channelTags>
+      <channelTag>
+        <id>b29a759a-79f8-45af-ab56-ee5a1b770367</id>
+        <name>hard</name>
+        <channelIds>
+          <string>881a6aef-8f85-4a61-b07e-47f556a91655</string>
+          <string>0db27dec-a4ae-44ab-a03d-e278f25eb894</string>
+          <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
+          <string>f5066aba-9341-4927-a952-451a197b076c</string>
+          <string>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</string>
+        </channelIds>
+        <backgroundColor>
+          <red>255</red>
+          <green>0</green>
+          <blue>51</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+    </channelTags>
+  </exportData>
+</channel>

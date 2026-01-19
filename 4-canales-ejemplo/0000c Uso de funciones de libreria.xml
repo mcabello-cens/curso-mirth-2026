@@ -1,0 +1,313 @@
+<channel version="4.5.2">
+  <id>62499f89-9b58-4c3f-9f7a-92e7a031826c</id>
+  <nextMetaDataId>2</nextMetaDataId>
+  <name>0000c Uso de funciones de libreria</name>
+  <description></description>
+  <revision>8</revision>
+  <sourceConnector version="4.5.2">
+    <metaDataId>0</metaDataId>
+    <name>sourceConnector</name>
+    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
+      <pluginProperties/>
+      <sourceConnectorProperties version="4.5.2">
+        <responseVariable>None</responseVariable>
+        <respondAfterProcessing>true</respondAfterProcessing>
+        <processBatch>false</processBatch>
+        <firstResponse>false</firstResponse>
+        <processingThreads>1</processingThreads>
+        <resourceIds class="linked-hash-map">
+          <entry>
+            <string>Default Resource</string>
+            <string>[Default Resource]</string>
+          </entry>
+        </resourceIds>
+        <queueBufferSize>1000</queueBufferSize>
+      </sourceConnectorProperties>
+    </properties>
+    <transformer version="4.5.2">
+      <elements>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>uso de libreria</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>true</enabled>
+          <script>var hola = helloWorld(&quot;AAAAA&quot;);
+
+logger.info(&quot;helloWorld()=&quot; + hola);</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+      </elements>
+      <inboundTemplate encoding="base64"></inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
+      <inboundDataType>RAW</inboundDataType>
+      <outboundDataType>RAW</outboundDataType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </inboundProperties>
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+          <splitType>JavaScript</splitType>
+          <batchScript></batchScript>
+        </batchProperties>
+      </outboundProperties>
+    </transformer>
+    <filter version="4.5.2">
+      <elements/>
+    </filter>
+    <transportName>Channel Reader</transportName>
+    <mode>SOURCE</mode>
+    <enabled>true</enabled>
+    <waitForPrevious>true</waitForPrevious>
+  </sourceConnector>
+  <destinationConnectors>
+    <connector version="4.5.2">
+      <metaDataId>1</metaDataId>
+      <name>Destination 1</name>
+      <properties class="com.mirth.connect.connectors.vm.VmDispatcherProperties" version="4.5.2">
+        <pluginProperties/>
+        <destinationConnectorProperties version="4.5.2">
+          <queueEnabled>false</queueEnabled>
+          <sendFirst>false</sendFirst>
+          <retryIntervalMillis>10000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>0</retryCount>
+          <rotate>false</rotate>
+          <includeFilterTransformer>false</includeFilterTransformer>
+          <threadCount>1</threadCount>
+          <threadAssignmentVariable></threadAssignmentVariable>
+          <validateResponse>false</validateResponse>
+          <resourceIds class="linked-hash-map">
+            <entry>
+              <string>Default Resource</string>
+              <string>[Default Resource]</string>
+            </entry>
+          </resourceIds>
+          <queueBufferSize>1000</queueBufferSize>
+          <reattachAttachments>true</reattachAttachments>
+        </destinationConnectorProperties>
+        <channelId>none</channelId>
+        <channelTemplate>${message.encodedData}</channelTemplate>
+        <mapVariables/>
+      </properties>
+      <transformer version="4.5.2">
+        <elements/>
+        <inboundDataType>RAW</inboundDataType>
+        <outboundDataType>RAW</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </outboundProperties>
+      </transformer>
+      <responseTransformer version="4.5.2">
+        <elements/>
+        <inboundDataType>RAW</inboundDataType>
+        <outboundDataType>RAW</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </inboundProperties>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+            <splitType>JavaScript</splitType>
+            <batchScript></batchScript>
+          </batchProperties>
+        </outboundProperties>
+      </responseTransformer>
+      <filter version="4.5.2">
+        <elements/>
+      </filter>
+      <transportName>Channel Writer</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+      <waitForPrevious>true</waitForPrevious>
+    </connector>
+  </destinationConnectors>
+  <preprocessingScript>// Modify the message variable below to pre process data
+return message;</preprocessingScript>
+  <postprocessingScript>// This script executes once after a message has been processed
+// Responses returned from here will be stored as &quot;Postprocessor&quot; in the response map
+return;</postprocessingScript>
+  <deployScript>// This script executes once when the channel is deployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+logger.info(&quot;Channel Deploy=&quot; + channelName);
+return;</deployScript>
+  <undeployScript>// This script executes once when the channel is undeployed
+// You only have access to the globalMap and globalChannelMap here to persist data
+return;</undeployScript>
+  <properties version="4.5.2">
+    <clearGlobalChannelMap>true</clearGlobalChannelMap>
+    <messageStorageMode>DEVELOPMENT</messageStorageMode>
+    <encryptData>false</encryptData>
+    <encryptAttachments>false</encryptAttachments>
+    <encryptCustomMetaData>false</encryptCustomMetaData>
+    <removeContentOnCompletion>false</removeContentOnCompletion>
+    <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
+    <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
+    <initialState>STARTED</initialState>
+    <storeAttachments>true</storeAttachments>
+    <metaDataColumns>
+      <metaDataColumn>
+        <name>SOURCE</name>
+        <type>STRING</type>
+        <mappingName>mirth_source</mappingName>
+      </metaDataColumn>
+      <metaDataColumn>
+        <name>TYPE</name>
+        <type>STRING</type>
+        <mappingName>mirth_type</mappingName>
+      </metaDataColumn>
+    </metaDataColumns>
+    <attachmentProperties version="4.5.2">
+      <type>None</type>
+      <properties/>
+    </attachmentProperties>
+    <resourceIds class="linked-hash-map">
+      <entry>
+        <string>Default Resource</string>
+        <string>[Default Resource]</string>
+      </entry>
+    </resourceIds>
+  </properties>
+  <exportData>
+    <metadata>
+      <enabled>true</enabled>
+      <lastModified>
+        <time>1768818318758</time>
+        <timezone>America/Santiago</timezone>
+      </lastModified>
+      <pruningSettings>
+        <archiveEnabled>true</archiveEnabled>
+        <pruneErroredMessages>false</pruneErroredMessages>
+      </pruningSettings>
+      <userId>1</userId>
+    </metadata>
+    <codeTemplateLibraries>
+      <codeTemplateLibrary version="4.5.2">
+        <id>2339d408-df4d-4866-abe3-44bb63eb100d</id>
+        <name>CURSO MIRTH 2026</name>
+        <revision>3</revision>
+        <lastModified>
+          <time>1768778735754</time>
+          <timezone>Etc/UTC</timezone>
+        </lastModified>
+        <description></description>
+        <includeNewChannels>false</includeNewChannels>
+        <enabledChannelIds>
+          <string>62499f89-9b58-4c3f-9f7a-92e7a031826c</string>
+        </enabledChannelIds>
+        <disabledChannelIds>
+          <string>d7c717f8-bb6e-4ff4-8628-d87c6aaeb23d</string>
+          <string>e915c676-824e-45f6-b4a3-f4979c355266</string>
+          <string>5ca5539b-e892-4be6-a2d8-90ca323bd90c</string>
+          <string>ab4e805c-b106-4c52-9ec8-2b55f4f0e10a</string>
+          <string>0a24f6d4-6832-49b2-b70c-225e9451a1ae</string>
+          <string>ba6cb940-817f-41e8-8fd7-849a8833b9c9</string>
+          <string>ddd4fb6b-0232-4af2-b32d-9022674322a0</string>
+          <string>77506ca5-171e-4573-bde0-55f8d6e45c25</string>
+          <string>0a8f6138-93eb-4e2e-9bc5-cf0daa7c3dcb</string>
+          <string>4ce3cb61-5563-4e93-ac58-628dc5b9fc89</string>
+          <string>17a2d374-8791-4075-a6d6-c07c74ea9024</string>
+          <string>6748bfe4-cb40-469a-bee3-b30128c7fb88</string>
+          <string>6ae7b2c6-fcc0-4399-bbd7-e516d596ade6</string>
+          <string>713196e0-52ab-4f9a-9101-afa89bca152e</string>
+          <string>2de13d52-355c-481a-bd2f-9c43d7ff7d0c</string>
+          <string>8f47fbaf-5fb3-4143-99fa-c5088748053c</string>
+          <string>f5066aba-9341-4927-a952-451a197b076c</string>
+          <string>0a203b7b-2817-4246-95e6-225b4f062d13</string>
+          <string>3316a31f-b6cb-48bd-887d-7e27105f7e4a</string>
+          <string>9490c690-7b56-4d54-b7da-1bc609d4cb69</string>
+          <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
+          <string>2f25ad07-5cea-4cbd-8a01-7c48fe6d50a4</string>
+          <string>f4fbb43c-34d0-48d0-ae50-029d392fddf0</string>
+          <string>fdf99305-f331-498a-af50-adfe60af87f7</string>
+          <string>0dedc17b-077c-487a-9f7c-2ace8cdb02be</string>
+          <string>e610d5a0-33a1-4da0-ac05-d0597733e3bb</string>
+          <string>4f9678ab-87e1-4652-8055-d54decec2aa1</string>
+          <string>a5f0676c-781d-4a84-8c1c-c27af8c0249e</string>
+          <string>e170cdc0-022b-4160-b259-ded4776d4258</string>
+          <string>573409bb-9ea8-4ae7-b62d-c35782fd75b5</string>
+          <string>2c51c1c0-40bb-47f3-a880-9f0dcbd94f50</string>
+          <string>9fe21897-a6ea-440d-974f-91d7b3c5f863</string>
+          <string>a3adc191-76bc-4623-b675-627c052b1e9c</string>
+          <string>c36331d6-959d-430f-a502-437161f1fbab</string>
+          <string>67d912c4-47a5-42ba-be12-dd77ff24dec9</string>
+          <string>4c783b83-4620-4d9f-9d0d-ab68ad92a4fa</string>
+          <string>0db27dec-a4ae-44ab-a03d-e278f25eb894</string>
+          <string>881a6aef-8f85-4a61-b07e-47f556a91655</string>
+          <string>32d53741-d577-411d-bbc5-eae8a0af9050</string>
+          <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
+          <string>1661c73e-47d5-42ba-9671-1b8398dba2b3</string>
+          <string>6330fdcb-ab53-4ab3-bdc4-13d6cba4dbcd</string>
+          <string>dfd034fa-bbcd-4bc7-bea5-22311d02c195</string>
+          <string>47f25c2b-b347-4c08-8202-2b7f49eff283</string>
+          <string>9f14bb6b-421d-4b2b-a36e-be77b3fa999d</string>
+          <string>56d576ed-9a33-4efe-b200-30d10b1e5b5d</string>
+        </disabledChannelIds>
+        <codeTemplates>
+          <codeTemplate version="4.5.2">
+            <id>c4e00eaa-076c-495b-82ca-99dcfd92650a</id>
+            <name>cl.cens.functions.helloWorld()</name>
+            <revision>4</revision>
+            <lastModified>
+              <time>1768769087502</time>
+              <timezone>Etc/UTC</timezone>
+            </lastModified>
+            <contextSet>
+              <delegate>
+                <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+                <contextType>SOURCE_RECEIVER</contextType>
+              </delegate>
+            </contextSet>
+            <properties class="com.mirth.connect.model.codetemplates.BasicCodeTemplateProperties">
+              <type>FUNCTION</type>
+              <code>/**
+	Función de demostración
+
+	@param {String} value - Un valor de entrada
+	@return {String} value - Valor devuelto por la función
+*/
+function helloWorld(value) {
+	return &quot;Hola Mundo!!!!&quot;;
+}</code>
+            </properties>
+          </codeTemplate>
+        </codeTemplates>
+      </codeTemplateLibrary>
+    </codeTemplateLibraries>
+    <channelTags>
+      <channelTag>
+        <id>708c7a9c-b4b7-4ea6-b790-f0c89fd5ee49</id>
+        <name>normal</name>
+        <channelIds>
+          <string>ab4e805c-b106-4c52-9ec8-2b55f4f0e10a</string>
+          <string>e915c676-824e-45f6-b4a3-f4979c355266</string>
+          <string>a5f0676c-781d-4a84-8c1c-c27af8c0249e</string>
+          <string>2de13d52-355c-481a-bd2f-9c43d7ff7d0c</string>
+          <string>573409bb-9ea8-4ae7-b62d-c35782fd75b5</string>
+          <string>8f47fbaf-5fb3-4143-99fa-c5088748053c</string>
+          <string>62499f89-9b58-4c3f-9f7a-92e7a031826c</string>
+          <string>2c51c1c0-40bb-47f3-a880-9f0dcbd94f50</string>
+          <string>dfd034fa-bbcd-4bc7-bea5-22311d02c195</string>
+          <string>c36331d6-959d-430f-a502-437161f1fbab</string>
+        </channelIds>
+        <backgroundColor>
+          <red>51</red>
+          <green>204</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+    </channelTags>
+  </exportData>
+</channel>
