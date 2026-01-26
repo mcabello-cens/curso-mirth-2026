@@ -1,0 +1,2 @@
+id,identificador,nombre,apellido,nacimiento,sexo
+2,22.222.222-K,Juan,Perez,20-10-1980,masculino
