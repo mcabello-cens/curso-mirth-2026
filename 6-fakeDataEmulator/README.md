@@ -36,12 +36,22 @@ python .\PatientGenerator.py --count COUNT [--interval INTERVAL] --target {file,
 ## ejemplo - Generar y enviar a un endpoint HTTP
 
 ```
-python .\PatientGenerator.py --count 10 --interval 0 --target http --threads 1 --endpoint http://localhost:9001/base/pacientes
+python .\PatientGenerator.py \\
+    --count 10 \\
+    --interval 0 \\
+    --target http \\
+    --threads 1 \\
+    --endpoint http://localhost:9001/base/pacientes
 ```
 
 
 ## ejemplo - Generar y enviar a una carpeta
 
 ```
-python .\PatientGenerator.py --count 10 --interval 0 --target file --threads 1 --targetFolder /data/sample
+python .\PatientGenerator.py \\
+    --count 10 \\
+    --interval 0 \\
+    --target file \\
+    --threads 1 \\
+    --targetFolder /data/sample
 ```
