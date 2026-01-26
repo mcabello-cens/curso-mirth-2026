@@ -6,7 +6,7 @@ A partir del ID generado en el ejercicio anterior, lea el recurso desde el servi
 
 * Servidor Hapi FHIR (HTTP Listener)
 
-* Obtener el recurso (ejemplo: HTTP GET fhir/Patient/123) en formato XML
+* Obtener el recurso (ejemplo: HTTP GET fhir/Patient/123) en formato XML. Realizar el request desde Postman
 
 * Mostrar el responde del request en una función logger.info() 
 
@@ -16,3 +16,5 @@ A partir del ID generado en el ejercicio anterior, lea el recurso desde el servi
 https://fhir.cens.cl/baseR4
 
 http://hapi.fhir.org/baseR4
+
+
