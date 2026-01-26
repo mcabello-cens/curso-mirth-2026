@@ -1,4 +1,8 @@
 
+
+# Listar las variables definidas a nivel de servidor (ConfigurationMap)
+
+```
 var configs = listConfigurationMaps(true);
 
 /**
@@ -43,3 +47,35 @@ function listConfigurationMaps(logValues) {
 
     return result;
 }
+```
+
+
+
+# Listar variables a nivel de SourceMap
+```
+/**/
+function listSourceMap() {
+    logger.info("===== SOURCE MAP VARIABLES =====");
+    var it = sourceMap.keySet().iterator();
+    while (it.hasNext()) {
+        var key = it.next();
+        var value = sourceMap.get(key);
+        logger.info("sourceMap[" + key + "] = " + value);
+    }
+}
+```
+
+# Listar variables a nivel de ConnectorMap
+```
+function listConnectorMap() {
+    logger.info("===== CONNECTOR MAP VARIABLES =====");
+    var it = connectorMap.keySet().iterator();
+    while (it.hasNext()) {
+        var key = it.next();
+        var value = connectorMap.get(key);
+        logger.info("connectorMap[" + key + "] = " + value);
+    }
+}
+
+logger.info(msg);
+```
