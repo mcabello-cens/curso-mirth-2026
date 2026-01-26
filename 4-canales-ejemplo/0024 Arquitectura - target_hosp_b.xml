@@ -1,7 +1,7 @@
 <channel version="4.5.2">
-  <id>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</id>
+  <id>cb705267-e5fd-47ee-b431-5e4ba4c1df9a</id>
   <nextMetaDataId>2</nextMetaDataId>
-  <name>014 - Canal Base64 Decodificador</name>
+  <name>0024 Arquitectura - target_hosp_b</name>
   <description></description>
   <revision>1</revision>
   <sourceConnector version="4.5.2">
@@ -25,89 +25,17 @@
       </sourceConnectorProperties>
     </properties>
     <transformer version="4.5.2">
-      <elements>
-        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-          <name>codificador base64</name>
-          <sequenceNumber>0</sequenceNumber>
-          <enabled>true</enabled>
-          <script>// 1. Extraer el valor del JSON
-var contenidoBase64 = msg[&apos;encodedContent&apos;].toString();
-
-// 2. Decodificar usando FileUtil
-// Esto devuelve un array de bytes
-var decodedBytes = FileUtil.decode(contenidoBase64);
-
-// 3. Convertir los bytes a String (Texto legible)
-var resultadoTexto = new java.lang.String(decodedBytes, &quot;UTF-8&quot;);
-
-// Opcional: Guardarlo en una variable de mapa para usarlo después
-channelMap.put(&quot;mensajeOriginal&quot;, resultadoTexto);
-
-
-
-msg = resultadoTexto;
-miXml = hl7ToXml(resultadoTexto);
-logger.info(&quot;hash2=&quot; + generateHash(resultadoTexto, &quot;SHA-256&quot;));
-
-/**
- * Convierte un String HL7 v2 a un objeto XML (E4X)
- * @param {String} hl7String - El mensaje HL7 en formato texto
- * @return {XML} Objeto XML listo para consultar
- */
-function hl7ToXml(hl7String) {
-    var serializer = SerializerFactory.getSerializer(&apos;HL7V2&apos;);
-    return new XML(serializer.toXML(hl7String));
-}
-
-
-// Ejemplo de uso:
-//var miXml = hl7ToXml(connectorMessage.getRawData());
-//var paciente = miXml[&apos;PID&apos;][&apos;PID.5&apos;][&apos;PID.5.1&apos;].toString();
-
-/**
- * Genera un hash a partir de un string de texto
- * @param {String} input - Texto a procesar
- * @param {String} algorithm - Ejemplo: &quot;SHA-256&quot;, &quot;MD5&quot;, &quot;SHA-1&quot;
- * @return {String} Hash en formato hexadecimal
- */
-function generateHash(input, algorithm) {
-    try {
-        if (!input) return &quot;&quot;;
-        
-        var digest = java.security.MessageDigest.getInstance(algorithm);
-        var hashBytes = digest.digest(input.getBytes(&quot;UTF-8&quot;));
-        
-        var hexString = new java.lang.StringBuilder();
-        for (var i = 0; i &lt; hashBytes.length; i++) {
-            var hex = java.lang.Integer.toHexString(0xff &amp; hashBytes[i]);
-            if (hex.length == 1) hexString.append(&apos;0&apos;);
-            hexString.append(hex);
-        }
-        
-        return hexString.toString();
-    } catch (e) {
-        logger.error(&quot;Error en generateHash: &quot; + e);
-        return null;
-    }
-}
-
-// --- Ejemplo de uso en un Transformer ---
-//var miHash = generateHash(connectorMessage.getRawData(), &quot;SHA-256&quot;);
-//channelMap.put(&quot;messageHash&quot;, miHash);</script>
-        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
-      </elements>
-      <inboundTemplate encoding="base64">ewoJIm1lc3NhZ2VJZCI6ICIxIiwKCSJlbmNvZGVkQ29udGVudCI6ICJhIiwKICAgICJoYXNoIjogImIiCn07</inboundTemplate>
-      <outboundTemplate encoding="base64"></outboundTemplate>
+      <elements/>
       <inboundDataType>JSON</inboundDataType>
-      <outboundDataType>RAW</outboundDataType>
+      <outboundDataType>JSON</outboundDataType>
       <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
         <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
           <splitType>JavaScript</splitType>
           <batchScript></batchScript>
         </batchProperties>
       </inboundProperties>
-      <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
           <splitType>JavaScript</splitType>
           <batchScript></batchScript>
         </batchProperties>
@@ -147,20 +75,20 @@ function generateHash(input, algorithm) {
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>logger.info(&quot;decoded message=&quot; + connectorMessage.getEncodedData());</script>
+        <script>logger.info(&quot;Hospital B recibe mensaje=\n&quot;+ connectorMessage.getEncodedData());</script>
       </properties>
       <transformer version="4.5.2">
         <elements/>
-        <inboundDataType>RAW</inboundDataType>
-        <outboundDataType>RAW</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <inboundDataType>JSON</inboundDataType>
+        <outboundDataType>JSON</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
@@ -168,16 +96,16 @@ function generateHash(input, algorithm) {
       </transformer>
       <responseTransformer version="4.5.2">
         <elements/>
-        <inboundDataType>RAW</inboundDataType>
-        <outboundDataType>RAW</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <inboundDataType>JSON</inboundDataType>
+        <outboundDataType>JSON</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
@@ -199,6 +127,10 @@ return message;</preprocessingScript>
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
+
+logger.info(&quot;Channel Deploy=&quot; + channelName);
+globalMap.put(&apos;0024_target_hosp_b&apos;, channelId);
+
 return;</deployScript>
   <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
@@ -213,7 +145,7 @@ return;</undeployScript>
     <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
     <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
     <initialState>STARTED</initialState>
-    <storeAttachments>true</storeAttachments>
+    <storeAttachments>false</storeAttachments>
     <metaDataColumns>
       <metaDataColumn>
         <name>SOURCE</name>
@@ -241,27 +173,36 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769385763812</time>
+        <time>1769407484592</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
+      <pruningSettings>
+        <archiveEnabled>true</archiveEnabled>
+        <pruneErroredMessages>false</pruneErroredMessages>
+      </pruningSettings>
+      <userId>1</userId>
     </metadata>
+    <dependentIds>
+      <string>becf6e89-ec2b-4e54-b819-8ce758341a48</string>
+    </dependentIds>
     <channelTags>
       <channelTag>
-        <id>b29a759a-79f8-45af-ab56-ee5a1b770367</id>
-        <name>hard</name>
+        <id>3446eb5e-3f93-41c1-a6a3-b72531348a14</id>
+        <name>arquitectura</name>
         <channelIds>
-          <string>881a6aef-8f85-4a61-b07e-47f556a91655</string>
-          <string>0db27dec-a4ae-44ab-a03d-e278f25eb894</string>
-          <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
-          <string>f5066aba-9341-4927-a952-451a197b076c</string>
-          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
-          <string>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</string>
-          <string>c36331d6-959d-430f-a502-437161f1fbab</string>
+          <string>3f2551d3-1bc0-4586-8e25-cc702c4c4305</string>
+          <string>cb705267-e5fd-47ee-b431-5e4ba4c1df9a</string>
+          <string>41e75289-b1ee-4444-95bc-2e369575a34f</string>
+          <string>becf6e89-ec2b-4e54-b819-8ce758341a48</string>
+          <string>745777b1-da8c-44a1-87d0-c001ead9834f</string>
+          <string>0a5deb46-9627-4fe5-85ee-63fae2917f8b</string>
+          <string>01d31491-3642-4c15-90aa-1aa020a1e176</string>
+          <string>c5b4ad3c-eea5-4717-bee6-c203ddf28549</string>
         </channelIds>
         <backgroundColor>
-          <red>255</red>
-          <green>0</green>
-          <blue>51</blue>
+          <red>0</red>
+          <green>128</green>
+          <blue>128</blue>
           <alpha>255</alpha>
         </backgroundColor>
       </channelTag>

@@ -1,14 +1,41 @@
 <channel version="4.5.2">
-  <id>e915c676-824e-45f6-b4a3-f4979c355266</id>
-  <nextMetaDataId>4</nextMetaDataId>
-  <name>0002 Data Conversion JSON to XML v2</name>
-  <description>Convierte un XML a JSON usando  xmlUtil</description>
-  <revision>1</revision>
+  <id>4ce3cb61-5563-4e93-ac58-628dc5b9fc89</id>
+  <nextMetaDataId>3</nextMetaDataId>
+  <name>0009b Leer desde BD</name>
+  <description>Lee una BD desde un DatabaseReader usando opciones de Mirth y los inserta en un archivo de texto</description>
+  <revision>2</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
+    <properties class="com.mirth.connect.connectors.jdbc.DatabaseReceiverProperties" version="4.5.2">
       <pluginProperties/>
+      <pollConnectorProperties version="4.5.2">
+        <pollingType>INTERVAL</pollingType>
+        <pollOnStart>false</pollOnStart>
+        <pollingFrequency>10000</pollingFrequency>
+        <pollingHour>0</pollingHour>
+        <pollingMinute>0</pollingMinute>
+        <cronJobs/>
+        <pollConnectorPropertiesAdvanced>
+          <weekly>true</weekly>
+          <inactiveDays>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+          </inactiveDays>
+          <dayOfMonth>1</dayOfMonth>
+          <allDay>true</allDay>
+          <startingHour>8</startingHour>
+          <startingMinute>0</startingMinute>
+          <endingHour>17</endingHour>
+          <endingMinute>0</endingMinute>
+        </pollConnectorPropertiesAdvanced>
+      </pollConnectorProperties>
       <sourceConnectorProperties version="4.5.2">
         <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
@@ -23,44 +50,142 @@
         </resourceIds>
         <queueBufferSize>1000</queueBufferSize>
       </sourceConnectorProperties>
+      <driver>org.postgresql.Driver</driver>
+      <url>jdbc:postgresql://192.168.10.131:5444/postgres</url>
+      <username>${DB.POSTGRES.USER}</username>
+      <password>admin</password>
+      <select>SELECT pacientes.id AS pacientes_id, pacientes.rut AS pacientes_rut, pacientes.nombre AS pacientes_nombre, pacientes.apellido_paterno AS pacientes_apellido_paterno, pacientes.apellido_materno AS pacientes_apellido_materno, pacientes.nacimiento AS pacientes_nacimiento, pacientes.telefono AS pacientes_telefono, pacientes.email AS pacientes_email
+FROM citas.pacientes
+
+</select>
+      <update></update>
+      <useScript>false</useScript>
+      <aggregateResults>false</aggregateResults>
+      <cacheResults>true</cacheResults>
+      <keepConnectionOpen>false</keepConnectionOpen>
+      <updateMode>1</updateMode>
+      <retryCount>3</retryCount>
+      <retryInterval>10000</retryInterval>
+      <fetchSize>1000</fetchSize>
+      <encoding>UTF-8</encoding>
     </properties>
     <transformer version="4.5.2">
       <elements>
         <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-          <name>convierte JSON a XML usando JsonUtil.toXml()</name>
+          <name>traza</name>
           <sequenceNumber>0</sequenceNumber>
           <enabled>true</enabled>
-          <script>// no es recomendable para usar como solución final
-// idealmente, parsear XML, mapeo manual, construcción de Json a mano.
+          <script>logger.info(&apos;source transformer&apos;);</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_id</name>
+          <sequenceNumber>1</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_id</variable>
+          <mapping>msg[&apos;pacientes_id&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_rut</name>
+          <sequenceNumber>2</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_rut</variable>
+          <mapping>msg[&apos;pacientes_rut&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_nombre</name>
+          <sequenceNumber>3</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_nombre</variable>
+          <mapping>msg[&apos;pacientes_nombre&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_apellido_paterno</name>
+          <sequenceNumber>4</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_apellido_paterno</variable>
+          <mapping>msg[&apos;pacientes_apellido_paterno&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_apellido_materno</name>
+          <sequenceNumber>5</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_apellido_materno</variable>
+          <mapping>msg[&apos;pacientes_apellido_materno&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_nacimiento</name>
+          <sequenceNumber>6</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_nacimiento</variable>
+          <mapping>msg[&apos;pacientes_nacimiento&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_telefono</name>
+          <sequenceNumber>7</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_telefono</variable>
+          <mapping>msg[&apos;pacientes_telefono&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>pacientes_email</name>
+          <sequenceNumber>8</sequenceNumber>
+          <enabled>false</enabled>
+          <variable>pacientes_email</variable>
+          <mapping>msg[&apos;pacientes_email&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>ver datos arribados al source transformer</name>
+          <sequenceNumber>9</sequenceNumber>
+          <enabled>true</enabled>
+          <script>logger.info(&quot;typeof msg = &quot; + typeof msg);
 
-try {
-	var rawData = connectorMessage.getRawData();
-
-	var xmlOut = JsonUtil.toXml(rawData);
-	channelMap.put(&quot;xmlOut&quot;, xmlOut);
-	
-} catch (e) {
-	logger.error(e);
-}
-	
-logger.info(&quot;rawData value&quot; + rawData);
-logger.info(&quot;typeof rawData&quot; + typeof rawData);
-logger.info(&quot;typeof xmlOut?&quot; + typeof xmlOut);
-logger.info(&quot;xml value=&quot; + xmlOut);
-
-var dateString = DateUtil.getCurrentDate(&quot;yyyyMMddHHmm&quot;);
-channelMap.put(&quot;fileName&quot;, dateString);
-
-msg = xmlOut;</script>
+logger.info(&quot;recorrer XML&quot;);
+if (msg instanceof XML) {
+  var x = msg;
+  logger.info(&quot;root = &quot; + x.name());
+  for each (var child in x.children()) {
+    logger.info(&quot;child tag = &quot; + child.name() + &quot; value=&quot; + child.toString());
+  }
+}</script>
         </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
       </elements>
-      <inboundTemplate encoding="base64">IHsKICAidXN1YXJpbyIgOiB7CiAgICAibm9tYnJlIiA6ICJKdWFuIFDDqXJleiIsCiAgICAiZWRhZCIgOiAzMCwKICAgICJjaXVkYWQiIDogIk1hZHJpZCIsCiAgICAiYWN0aXZvIiA6IHRydWUKICB9Cn0=</inboundTemplate>
+      <inboundTemplate encoding="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8cmVzdWx0Pg0KICAgIDxwYWNpZW50ZXNfaWQ+dmFsdWU8L3BhY2llbnRlc19pZD4NCiAgICA8cGFjaWVudGVzX3J1dD52YWx1ZTwvcGFjaWVudGVzX3J1dD4NCiAgICA8cGFjaWVudGVzX25vbWJyZT52YWx1ZTwvcGFjaWVudGVzX25vbWJyZT4NCiAgICA8cGFjaWVudGVzX2FwZWxsaWRvX3BhdGVybm8+dmFsdWU8L3BhY2llbnRlc19hcGVsbGlkb19wYXRlcm5vPg0KICAgIDxwYWNpZW50ZXNfYXBlbGxpZG9fbWF0ZXJubz52YWx1ZTwvcGFjaWVudGVzX2FwZWxsaWRvX21hdGVybm8+DQogICAgPHBhY2llbnRlc19uYWNpbWllbnRvPnZhbHVlPC9wYWNpZW50ZXNfbmFjaW1pZW50bz4NCiAgICA8cGFjaWVudGVzX3RlbGVmb25vPnZhbHVlPC9wYWNpZW50ZXNfdGVsZWZvbm8+DQogICAgPHBhY2llbnRlc19lbWFpbD52YWx1ZTwvcGFjaWVudGVzX2VtYWlsPg0KPC9yZXN1bHQ+DQo=</inboundTemplate>
       <outboundTemplate encoding="base64"></outboundTemplate>
-      <inboundDataType>JSON</inboundDataType>
+      <inboundDataType>XML</inboundDataType>
       <outboundDataType>XML</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
-        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
-          <splitType>JavaScript</splitType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
+          <stripNamespaces>false</stripNamespaces>
+        </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
           <batchScript></batchScript>
         </batchProperties>
       </inboundProperties>
@@ -80,7 +205,7 @@ msg = xmlOut;</script>
     <filter version="4.5.2">
       <elements/>
     </filter>
-    <transportName>Channel Reader</transportName>
+    <transportName>Database Reader</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
     <waitForPrevious>true</waitForPrevious>
@@ -88,8 +213,8 @@ msg = xmlOut;</script>
   <destinationConnectors>
     <connector version="4.5.2">
       <metaDataId>1</metaDataId>
-      <name>Destination 1 - Enviar a un archivo XML</name>
-      <properties class="com.mirth.connect.connectors.file.FileDispatcherProperties" version="4.5.2">
+      <name>Destination 1</name>
+      <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
         <pluginProperties/>
         <destinationConnectorProperties version="4.5.2">
           <queueEnabled>false</queueEnabled>
@@ -100,6 +225,7 @@ msg = xmlOut;</script>
           <rotate>false</rotate>
           <includeFilterTransformer>false</includeFilterTransformer>
           <threadCount>1</threadCount>
+          <threadAssignmentVariable></threadAssignmentVariable>
           <validateResponse>false</validateResponse>
           <resourceIds class="linked-hash-map">
             <entry>
@@ -108,31 +234,13 @@ msg = xmlOut;</script>
             </entry>
           </resourceIds>
           <queueBufferSize>1000</queueBufferSize>
-          <reattachAttachments>false</reattachAttachments>
+          <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <scheme>FILE</scheme>
-        <host>${TARGET_FOLDER}</host>
-        <outputPattern>${fileName}.xml</outputPattern>
-        <anonymous>true</anonymous>
-        <username>anonymous</username>
-        <password>anonymous</password>
-        <timeout>10000</timeout>
-        <keepConnectionOpen>true</keepConnectionOpen>
-        <maxIdleTime>0</maxIdleTime>
-        <secure>true</secure>
-        <passive>true</passive>
-        <validateConnection>true</validateConnection>
-        <outputAppend>true</outputAppend>
-        <errorOnExists>false</errorOnExists>
-        <temporary>false</temporary>
-        <binary>false</binary>
-        <charsetEncoding>UTF-8</charsetEncoding>
-        <template>${XmlUtil.prettyPrint(${xmlOut})}</template>
+        <script>logger.info(&quot;ID=&quot; + $(&apos;pacientes_rut&apos;));</script>
       </properties>
       <transformer version="4.5.2">
         <elements/>
-        <inboundTemplate encoding="base64"></inboundTemplate>
-        <outboundTemplate encoding="base64"></outboundTemplate>
+        <inboundTemplate encoding="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8cmVzdWx0Pg0KICAgIDxwYWNpZW50ZXNfaWQ+dmFsdWU8L3BhY2llbnRlc19pZD4NCiAgICA8cGFjaWVudGVzX3J1dD52YWx1ZTwvcGFjaWVudGVzX3J1dD4NCiAgICA8cGFjaWVudGVzX25vbWJyZT52YWx1ZTwvcGFjaWVudGVzX25vbWJyZT4NCiAgICA8cGFjaWVudGVzX2FwZWxsaWRvX3BhdGVybm8+dmFsdWU8L3BhY2llbnRlc19hcGVsbGlkb19wYXRlcm5vPg0KICAgIDxwYWNpZW50ZXNfYXBlbGxpZG9fbWF0ZXJubz52YWx1ZTwvcGFjaWVudGVzX2FwZWxsaWRvX21hdGVybm8+DQogICAgPHBhY2llbnRlc19uYWNpbWllbnRvPnZhbHVlPC9wYWNpZW50ZXNfbmFjaW1pZW50bz4NCiAgICA8cGFjaWVudGVzX3RlbGVmb25vPnZhbHVlPC9wYWNpZW50ZXNfdGVsZWZvbm8+DQogICAgPHBhY2llbnRlc19lbWFpbD52YWx1ZTwvcGFjaWVudGVzX2VtYWlsPg0KPC9yZXN1bHQ+DQo=</inboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
@@ -162,8 +270,6 @@ msg = xmlOut;</script>
       </transformer>
       <responseTransformer version="4.5.2">
         <elements/>
-        <inboundTemplate encoding="base64"></inboundTemplate>
-        <outboundTemplate encoding="base64"></outboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
@@ -194,15 +300,15 @@ msg = xmlOut;</script>
       <filter version="4.5.2">
         <elements/>
       </filter>
-      <transportName>File Writer</transportName>
+      <transportName>JavaScript Writer</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
     <connector version="4.5.2">
       <metaDataId>2</metaDataId>
-      <name>Destination 2 - Mostrar log de variable jsonString</name>
-      <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
+      <name>Destination 2</name>
+      <properties class="com.mirth.connect.connectors.jdbc.DatabaseDispatcherProperties" version="4.5.2">
         <pluginProperties/>
         <destinationConnectorProperties version="4.5.2">
           <queueEnabled>false</queueEnabled>
@@ -224,11 +330,20 @@ msg = xmlOut;</script>
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>var prettyPrintedMessage = XmlUtil.prettyPrint($(&apos;xmlOut&apos;));
-logger.info(&quot;resultado de xmlString=&quot; + prettyPrintedMessage); </script>
+        <driver>org.postgresql.Driver</driver>
+        <url>jdbc:postgresql://192.168.10.131:5444/postgres</url>
+        <username>admin</username>
+        <password>admin</password>
+        <query>INSERT INTO pacientes (rut, nombre, apellido_paterno, apellido_materno, nacimiento, telefono, email)
+VALUES (${pacientes_rut}, ${pacientes_nombre}, ${pacientes_apellido_paterno}, ${pacientes_apellido_materno}, ${pacientes_nacimiento}, ${pacientes_telefono}, ${pacientes_email} )
+
+-- INSERT INTO patient (rut, nombre, apellido1, nacimiento) VALUES
+-- (${row_rut}, ${row_name}, ${row_lastname}, STR_TO_DATE(${row_birthday}, &apos;%d-%m-%Y&apos;))</query>
+        <useScript>false</useScript>
       </properties>
       <transformer version="4.5.2">
         <elements/>
+        <inboundTemplate encoding="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8cmVzdWx0Pg0KICAgIDxwYWNpZW50ZXNfaWQ+dmFsdWU8L3BhY2llbnRlc19pZD4NCiAgICA8cGFjaWVudGVzX3J1dD52YWx1ZTwvcGFjaWVudGVzX3J1dD4NCiAgICA8cGFjaWVudGVzX25vbWJyZT52YWx1ZTwvcGFjaWVudGVzX25vbWJyZT4NCiAgICA8cGFjaWVudGVzX2FwZWxsaWRvX3BhdGVybm8+dmFsdWU8L3BhY2llbnRlc19hcGVsbGlkb19wYXRlcm5vPg0KICAgIDxwYWNpZW50ZXNfYXBlbGxpZG9fbWF0ZXJubz52YWx1ZTwvcGFjaWVudGVzX2FwZWxsaWRvX21hdGVybm8+DQogICAgPHBhY2llbnRlc19uYWNpbWllbnRvPnZhbHVlPC9wYWNpZW50ZXNfbmFjaW1pZW50bz4NCiAgICA8cGFjaWVudGVzX3RlbGVmb25vPnZhbHVlPC9wYWNpZW50ZXNfdGVsZWZvbm8+DQogICAgPHBhY2llbnRlc19lbWFpbD52YWx1ZTwvcGFjaWVudGVzX2VtYWlsPg0KPC9yZXN1bHQ+DQo=</inboundTemplate>
         <inboundDataType>XML</inboundDataType>
         <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
@@ -288,118 +403,47 @@ logger.info(&quot;resultado de xmlString=&quot; + prettyPrintedMessage); </scrip
       <filter version="4.5.2">
         <elements/>
       </filter>
-      <transportName>JavaScript Writer</transportName>
+      <transportName>Database Writer</transportName>
       <mode>DESTINATION</mode>
-      <enabled>true</enabled>
-      <waitForPrevious>true</waitForPrevious>
-    </connector>
-    <connector version="4.5.2">
-      <metaDataId>3</metaDataId>
-      <name>Destination 3 - Mostrar log de getEncodedData()</name>
-      <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
-        <pluginProperties/>
-        <destinationConnectorProperties version="4.5.2">
-          <queueEnabled>false</queueEnabled>
-          <sendFirst>false</sendFirst>
-          <retryIntervalMillis>10000</retryIntervalMillis>
-          <regenerateTemplate>false</regenerateTemplate>
-          <retryCount>0</retryCount>
-          <rotate>false</rotate>
-          <includeFilterTransformer>false</includeFilterTransformer>
-          <threadCount>1</threadCount>
-          <threadAssignmentVariable></threadAssignmentVariable>
-          <validateResponse>false</validateResponse>
-          <resourceIds class="linked-hash-map">
-            <entry>
-              <string>Default Resource</string>
-              <string>[Default Resource]</string>
-            </entry>
-          </resourceIds>
-          <queueBufferSize>1000</queueBufferSize>
-          <reattachAttachments>true</reattachAttachments>
-        </destinationConnectorProperties>
-        <script>logger.info(&quot;resultado de getEncodedData()=&quot; + connectorMessage.getEncodedData());</script>
-      </properties>
-      <transformer version="4.5.2">
-        <elements/>
-        <inboundDataType>XML</inboundDataType>
-        <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
-            <stripNamespaces>false</stripNamespaces>
-          </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
-            <splitType>Element_Name</splitType>
-            <elementName></elementName>
-            <level>1</level>
-            <query></query>
-            <batchScript></batchScript>
-          </batchProperties>
-        </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
-            <stripNamespaces>false</stripNamespaces>
-          </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
-            <splitType>Element_Name</splitType>
-            <elementName></elementName>
-            <level>1</level>
-            <query></query>
-            <batchScript></batchScript>
-          </batchProperties>
-        </outboundProperties>
-      </transformer>
-      <responseTransformer version="4.5.2">
-        <elements/>
-        <inboundDataType>XML</inboundDataType>
-        <outboundDataType>XML</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
-            <stripNamespaces>false</stripNamespaces>
-          </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
-            <splitType>Element_Name</splitType>
-            <elementName></elementName>
-            <level>1</level>
-            <query></query>
-            <batchScript></batchScript>
-          </batchProperties>
-        </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
-          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
-            <stripNamespaces>false</stripNamespaces>
-          </serializationProperties>
-          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
-            <splitType>Element_Name</splitType>
-            <elementName></elementName>
-            <level>1</level>
-            <query></query>
-            <batchScript></batchScript>
-          </batchProperties>
-        </outboundProperties>
-      </responseTransformer>
-      <filter version="4.5.2">
-        <elements/>
-      </filter>
-      <transportName>JavaScript Writer</transportName>
-      <mode>DESTINATION</mode>
-      <enabled>true</enabled>
+      <enabled>false</enabled>
       <waitForPrevious>true</waitForPrevious>
     </connector>
   </destinationConnectors>
   <preprocessingScript>// Modify the message variable below to pre process data
-
 return message;</preprocessingScript>
   <postprocessingScript>// This script executes once after a message has been processed
 // Responses returned from here will be stored as &quot;Postprocessor&quot; in the response map
-
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
+logger.info(&quot;Deploying channel=&quot; + channelName);
+
+var FileInputStream = Packages.java.io.FileInputStream;
+var Properties = Packages.java.util.Properties;
+
+function loadProps(path) {
+  var p = new Properties();
+  var fis = new FileInputStream(path);
+  try { p.load(fis); } finally { fis.close(); }
+  return p;
+}
+
+var props = loadProps(&quot;/run/secrets/mirth.properties&quot;);
+
+function prop(name) {
+  var v = props.getProperty(name);
+  if (v == null || String(v).trim() === &quot;&quot;) throw &quot;Missing secret: &quot; + name;
+  return String(v);
+}
+
+configurationMap.put(&quot;DB.POSTGRES.USER&quot;, prop(&quot;DB.POSTGRES.USER&quot;));
+configurationMap.put(&quot;DB.POSTGRES.PASSWORD&quot;, prop(&quot;DB.POSTGRES.PASSWORD&quot;));
+configurationMap.put(&quot;DB.POSTGRES.JDBC.URL&quot;, prop(&quot;DB.POSTGRES.JDBC.URL&quot;));
+
+
 return;</deployScript>
   <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
-
 return;</undeployScript>
   <properties version="4.5.2">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
@@ -411,7 +455,7 @@ return;</undeployScript>
     <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
     <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
     <initialState>STARTED</initialState>
-    <storeAttachments>false</storeAttachments>
+    <storeAttachments>true</storeAttachments>
     <metaDataColumns>
       <metaDataColumn>
         <name>SOURCE</name>
@@ -422,6 +466,21 @@ return;</undeployScript>
         <name>TYPE</name>
         <type>STRING</type>
         <mappingName>mirth_type</mappingName>
+      </metaDataColumn>
+      <metaDataColumn>
+        <name>DB_POSTGRES_USER</name>
+        <type>STRING</type>
+        <mappingName>admin</mappingName>
+      </metaDataColumn>
+      <metaDataColumn>
+        <name>DB_POSTGRES_PASSWORD</name>
+        <type>STRING</type>
+        <mappingName>admin</mappingName>
+      </metaDataColumn>
+      <metaDataColumn>
+        <name>DB_POSTGRES_JDBC_URL</name>
+        <type>STRING</type>
+        <mappingName>jdbc</mappingName>
       </metaDataColumn>
     </metaDataColumns>
     <attachmentProperties version="4.5.2">
@@ -439,12 +498,10 @@ return;</undeployScript>
     <metadata>
       <enabled>false</enabled>
       <lastModified>
-        <time>1769404540343</time>
+        <time>1769406839750</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
-        <pruneMetaDataDays>1</pruneMetaDataDays>
-        <pruneContentDays>1</pruneContentDays>
         <archiveEnabled>true</archiveEnabled>
         <pruneErroredMessages>false</pruneErroredMessages>
       </pruningSettings>
@@ -452,21 +509,17 @@ return;</undeployScript>
     </metadata>
     <channelTags>
       <channelTag>
-        <id>708c7a9c-b4b7-4ea6-b790-f0c89fd5ee49</id>
-        <name>normal</name>
+        <id>7cc16c8a-c34a-4ffe-bdaa-71ca181f9707</id>
+        <name>BDD</name>
         <channelIds>
-          <string>e915c676-824e-45f6-b4a3-f4979c355266</string>
-          <string>31ec515e-8e40-468e-8f6e-89912d81308c</string>
-          <string>2c51c1c0-40bb-47f3-a880-9f0dcbd94f50</string>
-          <string>dfd034fa-bbcd-4bc7-bea5-22311d02c195</string>
-          <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
-          <string>a3adc191-76bc-4623-b675-627c052b1e9c</string>
-          <string>fdf99305-f331-498a-af50-adfe60af87f7</string>
-          <string>17a2d374-8791-4075-a6d6-c07c74ea9024</string>
+          <string>713196e0-52ab-4f9a-9101-afa89bca152e</string>
+          <string>1e61610b-a229-44da-bb44-7888dc780213</string>
+          <string>4ce3cb61-5563-4e93-ac58-628dc5b9fc89</string>
+          <string>0dedc17b-077c-487a-9f7c-2ace8cdb02be</string>
         </channelIds>
         <backgroundColor>
-          <red>51</red>
-          <green>204</green>
+          <red>0</red>
+          <green>255</green>
           <blue>0</blue>
           <alpha>255</alpha>
         </backgroundColor>

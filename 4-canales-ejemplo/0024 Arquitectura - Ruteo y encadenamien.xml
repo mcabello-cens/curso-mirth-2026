@@ -1,23 +1,34 @@
 <channel version="4.5.2">
-  <id>c36331d6-959d-430f-a502-437161f1fbab</id>
+  <id>becf6e89-ec2b-4e54-b819-8ce758341a48</id>
   <nextMetaDataId>2</nextMetaDataId>
-  <name>0007 Leer HL7v2 y construir un PDF</name>
-  <description>Produce un archivo PDF a partir de los datos entregados en el mensaje</description>
-  <revision>2</revision>
+  <name>0024 Arquitectura - Ruteo y encadenamien</name>
+  <description>Ruteo con encadenamiento de canales
+
+{
+  &quot;source&quot;: {
+    &quot;identifier&quot;: &quot;CM-1111&quot;,
+    &quot;organization&quot;: &quot;Centro Médico Las Aguilas&quot;
+  },
+  &quot;destination&quot;: {
+    &quot;identifier&quot;: &quot;HO-2222&quot;,
+    &quot;organization&quot;: &quot;Hospital Juan Pablo II&quot;
+  },
+  &quot;patient&quot;: {
+    &quot;firstName&quot;: &quot;Jorge&quot;,
+    &quot;lastName&quot;: &quot;Perez&quot;
+  }
+}</description>
+  <revision>6</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.tcp.TcpReceiverProperties" version="4.5.2">
+    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
       <pluginProperties/>
-      <listenerConnectorProperties version="4.5.2">
-        <host>0.0.0.0</host>
-        <port>6661</port>
-      </listenerConnectorProperties>
       <sourceConnectorProperties version="4.5.2">
-        <responseVariable>Auto-generate (After source transformer)</responseVariable>
+        <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
         <processBatch>false</processBatch>
-        <firstResponse>true</firstResponse>
+        <firstResponse>false</firstResponse>
         <processingThreads>1</processingThreads>
         <resourceIds class="linked-hash-map">
           <entry>
@@ -27,74 +38,74 @@
         </resourceIds>
         <queueBufferSize>1000</queueBufferSize>
       </sourceConnectorProperties>
-      <transmissionModeProperties class="com.mirth.connect.plugins.mllpmode.MLLPModeProperties">
-        <pluginPointName>MLLP</pluginPointName>
-        <startOfMessageBytes>0B</startOfMessageBytes>
-        <endOfMessageBytes>1C0D</endOfMessageBytes>
-        <useMLLPv2>false</useMLLPv2>
-        <ackBytes>06</ackBytes>
-        <nackBytes>15</nackBytes>
-        <maxRetries>2</maxRetries>
-      </transmissionModeProperties>
-      <serverMode>true</serverMode>
-      <remoteAddress></remoteAddress>
-      <remotePort></remotePort>
-      <overrideLocalBinding>false</overrideLocalBinding>
-      <reconnectInterval>5000</reconnectInterval>
-      <receiveTimeout>0</receiveTimeout>
-      <bufferSize>65536</bufferSize>
-      <maxConnections>10</maxConnections>
-      <keepConnectionOpen>true</keepConnectionOpen>
-      <dataTypeBinary>false</dataTypeBinary>
-      <charsetEncoding>UTF-8</charsetEncoding>
-      <respondOnNewConnection>0</respondOnNewConnection>
-      <responseAddress></responseAddress>
-      <responsePort></responsePort>
     </properties>
     <transformer version="4.5.2">
       <elements>
-        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
-          <name>family</name>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>Router</name>
           <sequenceNumber>0</sequenceNumber>
-          <enabled>true</enabled>
-          <variable>family</variable>
-          <mapping>msg[&apos;PID&apos;][&apos;PID.5&apos;][&apos;PID.5.1&apos;].toString()</mapping>
-          <defaultValue></defaultValue>
-          <replacements/>
-          <scope>CHANNEL</scope>
-        </com.mirth.connect.plugins.mapper.MapperStep>
-        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
-          <name>name</name>
+          <enabled>false</enabled>
+          <script>var messageString = JSON.stringify( msg );
+
+var destination = msg[&apos;destination&apos;][&apos;identifier&apos;];
+
+var HOSP_A = &quot;HO-1111&quot;;
+var HOSP_B = &quot;HO-2222&quot;;
+
+
+if (destination == HOSP_A)
+{
+   logger.info(&quot;Rutea a Hospital A&quot;);
+   router.routeMessageByChannelId(globalMap.get(&apos;0024 Arquitectura - target_hosp_a&apos;), messageString);
+   return;
+}
+
+if (destination == HOSP_B)
+{
+   logger.info(&quot;Rutea a Hospital B&quot;);
+   router.routeMessageByChannelId(globalMap.get(&apos;0024 Arquitectura - target_hosp_b&apos;), messageString);
+   return;
+}</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>Router switch case</name>
           <sequenceNumber>1</sequenceNumber>
           <enabled>true</enabled>
-          <variable>name</variable>
-          <mapping>msg[&apos;PID&apos;][&apos;PID.5&apos;][&apos;PID.5.2&apos;].toString()</mapping>
-          <defaultValue></defaultValue>
-          <replacements/>
-          <scope>CHANNEL</scope>
-        </com.mirth.connect.plugins.mapper.MapperStep>
-        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
-          <name>birthday</name>
-          <sequenceNumber>2</sequenceNumber>
-          <enabled>true</enabled>
-          <variable>birthday</variable>
-          <mapping>msg[&apos;PID&apos;][&apos;PID.7&apos;][&apos;PID.7.1&apos;].toString()</mapping>
-          <defaultValue></defaultValue>
-          <replacements/>
-          <scope>CHANNEL</scope>
-        </com.mirth.connect.plugins.mapper.MapperStep>
+          <script>var messageString = JSON.stringify( msg );
+
+var destination = msg[&apos;destination&apos;][&apos;identifier&apos;];
+
+var HOSP_A = &quot;HO-1111&quot;;
+var HOSP_B = &quot;HO-2222&quot;;
+
+
+switch (destination) {
+    case HOSP_A:
+		logger.info(&quot;Rutea a Hospital A&quot;);
+   		router.routeMessageByChannelId(globalMap.get(&apos;0024_target_hosp_a&apos;), messageString);
+        	break; // Important: terminates the switch statement
+    case HOSP_B:
+		logger.info(&quot;Rutea a Hospital B&quot;);
+   		router.routeMessageByChannelId(globalMap.get(&apos;0024_target_hosp_b&apos;), messageString);
+        	break;
+    // ... more cases ...
+    default:
+        // Code to execute if no case matches
+        break;
+}</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
       </elements>
-      <inboundTemplate encoding="base64">TVNIfF5+XCZ8U0VORElOR19BUFBMSUNBVElPTnxTRU5ESU5HX0ZBQ0lMSVRZfFJFQ0VJVklOR19BUFBMSUNBVElPTnxSRUNFSVZJTkdfRkFDSUxJVFl8MjAxMTA2MTMwODM2MTd8fEFEVF5BMDF8OTM0NTc2MTIwMTEwNjEzMDgzNjE3fFB8Mi41fHx8fA1FVk58QTAxfDIwMTEwNjEzMDgzNjE3fHx8DVBJRHwxfHwxMzU3Njl8fE1PVVNFXk1JQ0tFWV58fDE5MjgxMTE4fE18fHwxMjMgTWFpbiBTdC5eXkxha2UgQnVlbmEgVmlzdGFeRkxeMzI4MzB8fCg0MDcpOTM5LTEyODleXl50aGVNYWluTW91c2VAZGlzbmV5LmNvbXx8fHx8MTcxOXw5OTk5OTk5OXx8fHx8fHx8fHx8fHx8fHx8fHx8DVBWMXwxfE98fHx8fF5eXl5eXl5efF5eXl5eXl5eDQ==</inboundTemplate>
+      <inboundTemplate encoding="base64">ewogICJzb3VyY2UiOiB7CiAgICAiaWRlbnRpZmllciI6ICJDTS0xMTExIiwKICAgICJvcmdhbml6YXRpb24iOiAiQ2VudHJvIE3DqWRpY28gTGFzIEFndWlsYXMiCiAgfSwKICAiZGVzdGluYXRpb24iOiB7CiAgICAiaWRlbnRpZmllciI6ICJITy0yMjIyIiwKICAgICJvcmdhbml6YXRpb24iOiAiSG9zcGl0YWwgSnVhbiBQYWJsbyBJSSIKICB9LAogICJwYXRpZW50IjogewogICAgImZpcnN0TmFtZSI6ICJKb3JnZSIsCiAgICAibGFzdE5hbWUiOiAiUGVyZXoiCiAgfQp9</inboundTemplate>
       <outboundTemplate encoding="base64"></outboundTemplate>
-      <inboundDataType>HL7V2</inboundDataType>
-      <outboundDataType>RAW</outboundDataType>
+      <inboundDataType>JSON</inboundDataType>
+      <outboundDataType>JSON</outboundDataType>
       <inboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.2">
         <serializationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2SerializationProperties" version="4.5.2">
           <handleRepetitions>true</handleRepetitions>
           <handleSubcomponents>true</handleSubcomponents>
           <useStrictParser>false</useStrictParser>
           <useStrictValidation>false</useStrictValidation>
-          <stripNamespaces>false</stripNamespaces>
+          <stripNamespaces>true</stripNamespaces>
           <segmentDelimiter>\r</segmentDelimiter>
           <convertLineBreaks>true</convertLineBreaks>
         </serializationProperties>
@@ -116,19 +127,19 @@
           <rejectedACKCode>AR</rejectedACKCode>
           <rejectedACKMessage>Message Rejected.</rejectedACKMessage>
           <msh15ACKAccept>false</msh15ACKAccept>
-          <dateFormat>yyyyMMddHHmmss.SSS</dateFormat>
+          <dateFormat>yyyyMMddHHmmss</dateFormat>
         </responseGenerationProperties>
         <responseValidationProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2ResponseValidationProperties" version="4.5.2">
           <successfulACKCode>AA,CA</successfulACKCode>
           <errorACKCode>AE,CE</errorACKCode>
           <rejectedACKCode>AR,CR</rejectedACKCode>
-          <validateMessageControlId>true</validateMessageControlId>
+          <validateMessageControlId>false</validateMessageControlId>
           <originalMessageControlId>Destination_Encoded</originalMessageControlId>
           <originalIdMapVariable></originalIdMapVariable>
         </responseValidationProperties>
       </inboundProperties>
-      <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
           <splitType>JavaScript</splitType>
           <batchScript></batchScript>
         </batchProperties>
@@ -137,7 +148,7 @@
     <filter version="4.5.2">
       <elements/>
     </filter>
-    <transportName>TCP Listener</transportName>
+    <transportName>Channel Reader</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
     <waitForPrevious>true</waitForPrevious>
@@ -145,8 +156,8 @@
   <destinationConnectors>
     <connector version="4.5.2">
       <metaDataId>1</metaDataId>
-      <name>Generate PDF</name>
-      <properties class="com.mirth.connect.connectors.doc.DocumentDispatcherProperties" version="4.5.2">
+      <name>Destination 1</name>
+      <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
         <pluginProperties/>
         <destinationConnectorProperties version="4.5.2">
           <queueEnabled>false</queueEnabled>
@@ -168,90 +179,20 @@
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <host>/data/target/pdf</host>
-        <outputPattern>patient_report_${message.messageId}.pdf</outputPattern>
-        <documentType>pdf</documentType>
-        <encrypt>true</encrypt>
-        <output>FILE</output>
-        <password>123</password>
-        <pageWidth>8.5</pageWidth>
-        <pageHeight>11</pageHeight>
-        <pageUnit>INCHES</pageUnit>
-        <template>&lt;html&gt;
-
-&lt;head&gt;
-    &lt;title&gt;Patient Report&lt;/title&gt;
-    &lt;style&gt;
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            padding: 20px;
-            background-color: #F8F8F8;
-        }
-
-        h1 {
-            color: #002aff;
-            font-size: 28px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #007BFF;
-        }
-
-        h2 {
-            color: #1778b8;
-            font-size: 24px;
-            margin-top: 30px;
-        }
-
-        p {
-            color: #6C757D;
-            font-size: 16px;
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
-
-        strong {
-            color: #DC3545;
-        }
-
-        .section {
-            margin-top: 20px;
-            border-bottom: 1px solid #DCDCDC;
-            padding-bottom: 10px;
-        }
-    &lt;/style&gt;
-&lt;/head&gt;
-
-
-&lt;body&gt;
-    &lt;h1&gt;Patient Report&lt;/h1&gt;
-    &lt;div class=&apos;section&apos;&gt;
-        &lt;h2&gt;Patient Information&lt;/h2&gt;
-        &lt;p&gt;&lt;strong&gt;Family:&lt;/strong&gt; ${family} &lt;/p&gt;
-        &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; ${name} &lt;/p&gt;
-        &lt;p&gt;&lt;strong&gt;Birthday:&lt;/strong&gt; ${birthday} &lt;/p&gt;
-    &lt;/div&gt;
-    &lt;div class=&apos;section&apos;&gt;
-        &lt;h2&gt;Diagnosis&lt;/h2&gt;
-        &lt;p&gt;diagnosis&lt;/p&gt;
-    &lt;/div&gt;
-    &lt;h2&gt;Additional Details&lt;/h2&gt;
-    &lt;p&gt;Here are some additional details about the patient and diagnosis...&lt;/p&gt;
-&lt;/body&gt;
-
-&lt;/html&gt;</template>
+        <script>logger.info(&quot;mensaje ruteado&quot;);</script>
       </properties>
       <transformer version="4.5.2">
         <elements/>
-        <inboundDataType>RAW</inboundDataType>
-        <outboundDataType>RAW</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <inboundDataType>JSON</inboundDataType>
+        <outboundDataType>JSON</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
@@ -259,16 +200,16 @@
       </transformer>
       <responseTransformer version="4.5.2">
         <elements/>
-        <inboundDataType>RAW</inboundDataType>
-        <outboundDataType>RAW</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <inboundDataType>JSON</inboundDataType>
+        <outboundDataType>JSON</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
             <splitType>JavaScript</splitType>
             <batchScript></batchScript>
           </batchProperties>
@@ -277,7 +218,7 @@
       <filter version="4.5.2">
         <elements/>
       </filter>
-      <transportName>Document Writer</transportName>
+      <transportName>JavaScript Writer</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
@@ -290,6 +231,7 @@ return message;</preprocessingScript>
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
+logger.info(&quot;Channel Deploy=&quot; + channelName);
 return;</deployScript>
   <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
@@ -304,7 +246,7 @@ return;</undeployScript>
     <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
     <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
     <initialState>STARTED</initialState>
-    <storeAttachments>true</storeAttachments>
+    <storeAttachments>false</storeAttachments>
     <metaDataColumns>
       <metaDataColumn>
         <name>SOURCE</name>
@@ -332,7 +274,7 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769406678945</time>
+        <time>1769444692674</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
@@ -341,23 +283,28 @@ return;</undeployScript>
       </pruningSettings>
       <userId>1</userId>
     </metadata>
+    <dependencyIds>
+      <string>cb705267-e5fd-47ee-b431-5e4ba4c1df9a</string>
+      <string>c5b4ad3c-eea5-4717-bee6-c203ddf28549</string>
+    </dependencyIds>
     <channelTags>
       <channelTag>
-        <id>b29a759a-79f8-45af-ab56-ee5a1b770367</id>
-        <name>hard</name>
+        <id>3446eb5e-3f93-41c1-a6a3-b72531348a14</id>
+        <name>arquitectura</name>
         <channelIds>
-          <string>881a6aef-8f85-4a61-b07e-47f556a91655</string>
-          <string>0db27dec-a4ae-44ab-a03d-e278f25eb894</string>
-          <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
-          <string>f5066aba-9341-4927-a952-451a197b076c</string>
-          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
-          <string>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</string>
-          <string>c36331d6-959d-430f-a502-437161f1fbab</string>
+          <string>3f2551d3-1bc0-4586-8e25-cc702c4c4305</string>
+          <string>cb705267-e5fd-47ee-b431-5e4ba4c1df9a</string>
+          <string>41e75289-b1ee-4444-95bc-2e369575a34f</string>
+          <string>becf6e89-ec2b-4e54-b819-8ce758341a48</string>
+          <string>745777b1-da8c-44a1-87d0-c001ead9834f</string>
+          <string>0a5deb46-9627-4fe5-85ee-63fae2917f8b</string>
+          <string>01d31491-3642-4c15-90aa-1aa020a1e176</string>
+          <string>c5b4ad3c-eea5-4717-bee6-c203ddf28549</string>
         </channelIds>
         <backgroundColor>
-          <red>255</red>
-          <green>0</green>
-          <blue>51</blue>
+          <red>0</red>
+          <green>128</green>
+          <blue>128</blue>
           <alpha>255</alpha>
         </backgroundColor>
       </channelTag>

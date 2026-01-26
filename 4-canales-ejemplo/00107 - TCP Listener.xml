@@ -1,9 +1,9 @@
 <channel version="4.5.2">
-  <id>67d912c4-47a5-42ba-be12-dd77ff24dec9</id>
+  <id>ea2163a0-3787-4951-92f0-64dea4117732</id>
   <nextMetaDataId>2</nextMetaDataId>
-  <name>010 - LLP Server - Port 6001</name>
+  <name>00107 - TCP Listener</name>
   <description></description>
-  <revision>2</revision>
+  <revision>5</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -11,10 +11,10 @@
       <pluginProperties/>
       <listenerConnectorProperties version="4.5.2">
         <host>0.0.0.0</host>
-        <port>6661</port>
+        <port>6001</port>
       </listenerConnectorProperties>
       <sourceConnectorProperties version="4.5.2">
-        <responseVariable>Auto-generate (After source transformer)</responseVariable>
+        <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
         <processBatch>false</processBatch>
         <firstResponse>true</firstResponse>
@@ -53,6 +53,8 @@
     </properties>
     <transformer version="4.5.2">
       <elements/>
+      <inboundTemplate encoding="base64">TVNIfF5+XCZ8U1lTVEVNfEhPU1BJVEFMfEFEVHxMQUJ8MjAyNTAxMDQxMDMwfHxBRFReQTAxfEREQjkxNDk4fFB8Mi4zfApQSUR8MXx8NzY1MENFNTF8fEphcmVkIEdyYXl8fDE5ODEwMTAxfE18fHwyMDIgVW5rbm93biBCbHZkXl5DaXR5XlNUXjAwMDAwXlVTQQpFVk58QTAxfDIwMjUwMTA0MDkwMHx8fEFkbWluXlVzZXIKUFYxfDF8SXxJQ1VeMTIzNF4xXkhvc3BpdGFsfHx8MTIzNDVeUGh5c2ljaWFuXkpvaG5eQV5eRHIufA==</inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
       <inboundDataType>HL7V2</inboundDataType>
       <outboundDataType>HL7V2</outboundDataType>
       <inboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.2">
@@ -168,7 +170,9 @@
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>logger.info(&quot;LLP Server received message=&quot; + connectorMessage.getEncodedData());</script>
+        <script>logger.info(&apos;Destination1=&apos;  + connectorMessage.getEncodedData());
+
+</script>
       </properties>
       <transformer version="4.5.2">
         <elements/>
@@ -358,7 +362,7 @@ return;</deployScript>
 return;</undeployScript>
   <properties version="4.5.2">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
-    <messageStorageMode>DEVELOPMENT</messageStorageMode>
+    <messageStorageMode>PRODUCTION</messageStorageMode>
     <encryptData>false</encryptData>
     <encryptAttachments>false</encryptAttachments>
     <encryptCustomMetaData>false</encryptCustomMetaData>
@@ -392,19 +396,67 @@ return;</undeployScript>
   </properties>
   <exportData>
     <metadata>
-      <enabled>true</enabled>
+      <enabled>false</enabled>
       <lastModified>
-        <time>1769445730675</time>
+        <time>1769435499521</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
+        <pruneMetaDataDays>1</pruneMetaDataDays>
         <archiveEnabled>true</archiveEnabled>
         <pruneErroredMessages>false</pruneErroredMessages>
       </pruningSettings>
       <userId>1</userId>
     </metadata>
-    <dependentIds>
-      <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
-    </dependentIds>
+    <channelTags>
+      <channelTag>
+        <id>a179b685-0749-44a5-b995-970a0a889463</id>
+        <name>connectors</name>
+        <channelIds>
+          <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
+          <string>f11591a4-a387-4991-9901-0ac66f0f8a8d</string>
+          <string>c582b542-b52c-4c3a-a259-f1555333da8b</string>
+          <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
+          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
+          <string>d88996fd-e486-4b5f-9d6e-cd8f86e369e4</string>
+          <string>477b6260-f1b7-4306-9691-be45b7b0debe</string>
+          <string>d5a62b7a-b9f0-46f7-9c9c-ab0c241d9acf</string>
+          <string>ea2163a0-3787-4951-92f0-64dea4117732</string>
+        </channelIds>
+        <backgroundColor>
+          <red>128</red>
+          <green>128</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+      <channelTag>
+        <id>03d6305f-c077-4ea9-b7d8-f46b9a2b5fb0</id>
+        <name>HL7v2</name>
+        <channelIds>
+          <string>e170cdc0-022b-4160-b259-ded4776d4258</string>
+          <string>a2811665-c1fd-4ead-b7ad-ffb5dcc00c73</string>
+          <string>a3adc191-76bc-4623-b675-627c052b1e9c</string>
+          <string>17a2d374-8791-4075-a6d6-c07c74ea9024</string>
+          <string>6748bfe4-cb40-469a-bee3-b30128c7fb88</string>
+          <string>31ec515e-8e40-468e-8f6e-89912d81308c</string>
+          <string>32d53741-d577-411d-bbc5-eae8a0af9050</string>
+          <string>ead6e735-1ed0-4334-9f5b-8f40761aa1f5</string>
+          <string>1661c73e-47d5-42ba-9671-1b8398dba2b3</string>
+          <string>6330fdcb-ab53-4ab3-bdc4-13d6cba4dbcd</string>
+          <string>47f25c2b-b347-4c08-8202-2b7f49eff283</string>
+          <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
+          <string>2f25ad07-5cea-4cbd-8a01-7c48fe6d50a4</string>
+          <string>fdf99305-f331-498a-af50-adfe60af87f7</string>
+          <string>ea2163a0-3787-4951-92f0-64dea4117732</string>
+        </channelIds>
+        <backgroundColor>
+          <red>204</red>
+          <green>255</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+    </channelTags>
   </exportData>
 </channel>

@@ -1,11 +1,10 @@
 <channel version="4.5.2">
-  <id>4f9678ab-87e1-4652-8055-d54decec2aa1</id>
+  <id>f4fbb43c-34d0-48d0-ae50-029d392fddf0</id>
   <nextMetaDataId>2</nextMetaDataId>
-  <name>0018 Consultar recurso a un FHIR Server</name>
-  <description>Desde API REST obtiene una lista de recursos Patient&#xd;
-&#xd;
-GET localhost:8082/fhir/Patient</description>
-  <revision>20</revision>
+  <name>0019a - Registrar en FHIR Server</name>
+  <description>Envia un recurso FHIR via POST&#xd;
+</description>
+  <revision>17</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -20,7 +19,7 @@ GET localhost:8082/fhir/Patient</description>
         <port>9002</port>
       </listenerConnectorProperties>
       <sourceConnectorProperties version="4.5.2">
-        <responseVariable>response</responseVariable>
+        <responseVariable>d1</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
         <processBatch>false</processBatch>
         <firstResponse>false</firstResponse>
@@ -38,17 +37,10 @@ GET localhost:8082/fhir/Patient</description>
       <includeMetadata>false</includeMetadata>
       <binaryMimeTypes>application/.*(?&lt;!json|xml)$|image/.*|video/.*|audio/.*</binaryMimeTypes>
       <binaryMimeTypesRegex>true</binaryMimeTypesRegex>
-      <responseContentType>${responseContentType}</responseContentType>
+      <responseContentType>application/json</responseContentType>
       <responseDataTypeBinary>false</responseDataTypeBinary>
-      <responseStatusCode>${responseCode}</responseStatusCode>
-      <responseHeaders class="linked-hash-map">
-        <entry>
-          <string>Content-Type</string>
-          <list>
-            <string>application/fhir+json</string>
-          </list>
-        </entry>
-      </responseHeaders>
+      <responseStatusCode></responseStatusCode>
+      <responseHeaders class="linked-hash-map"/>
       <responseHeadersVariable></responseHeadersVariable>
       <useResponseHeadersVariable>false</useResponseHeadersVariable>
       <charset>UTF-8</charset>
@@ -59,39 +51,49 @@ GET localhost:8082/fhir/Patient</description>
     <transformer version="4.5.2">
       <elements>
         <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-          <name>obtener el id</name>
+          <name>crear un recurso FHIR para POST o PUT</name>
           <sequenceNumber>0</sequenceNumber>
           <enabled>true</enabled>
-          <script>var method = String(sourceMap.get(&apos;method&apos;));          // o $s(&apos;method&apos;)
-var path   = String(sourceMap.get(&apos;requestContextPath&apos;) || sourceMap.get(&apos;contextPath&apos;) || &apos;&apos;);
-var url    = String(sourceMap.get(&apos;requestUrl&apos;) || &apos;&apos;);
+          <script>/*
+var patient = {
+    resourceType: &quot;Patient&quot;,
+    id: &apos;48426259&apos;,
+    text: {
+        status: &quot;generated&quot;,
+        div: &quot;&lt;div xmlns=\&quot;http://www.w3.org/1999/xhtml\&quot;&gt;&lt;div class=\&quot;hapiHeaderText\&quot;&gt;Riquelme &lt;b&gt;LUIS &lt;/b&gt;&lt;/div&gt;&lt;table class=\&quot;hapiPropertyTable\&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;td&gt;&lt;span&gt;02 November 1960&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&quot;
+    },
+    name: [
+        {
+            use: &quot;official&quot;,
+            family: &quot;Luis&quot;,
+            given: [
+                &quot;Riquelme&quot;
+            ]
+        }
+    ],
+    telecom: [
+        {
+            system: &quot;phone&quot;,
+            value: &quot;+19253467896&quot;,
+            use: &quot;mobile&quot;
+        }
+    ],
+    gender: &quot;male&quot;,
+    birthDate: &quot;1960-11-02&quot;
+}
+*/
 
+channelMap.put(&apos;id&apos;, msg[&apos;id&apos;].toString());
 
-logger.info(&apos;method=&apos; + method);
-logger.info(&apos;requestContextPath=&apos; + path);
-logger.info(&apos;requestUrl=&apos; + url);
-
-
-if (method !== &apos;GET&apos;) throw &apos;Método no permitido&apos;;
-
-
-var id = extractId(path || url);
-logger.info(&apos;id=&apos; + id);
-channelMap.put(&apos;id&apos;, id);
-
-function extractId(value) {
-  value = String(value || &apos;&apos;).replace(/\/$/, &apos;&apos;); // quita slash final
-  // Si viene URL completa, nos da lo mismo: split por &quot;/&quot;
-  return value.split(&apos;/&apos;).pop();
-}</script>
+//msg = patient;</script>
         </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
       </elements>
-      <inboundTemplate encoding="base64">PEh0dHBSZXF1ZXN0PgogICAgPFJlbW90ZUFkZHJlc3M+MTkyLjE2OC4xMC4xPC9SZW1vdGVBZGRyZXNzPgogICAgPFJlcXVlc3RVcmw+aHR0cDovL2VuZHBvaW50LmNsL2ZoaXIvUGF0aWVudC8xMjM8L1JlcXVlc3RVcmw+CiAgICA8TWV0aG9kPkdFVDwvTWV0aG9kPgogICAgPFJlcXVlc3RQYXRoPi9QYXRpZW50LzEyMzwvUmVxdWVzdFBhdGg+CiAgICA8UmVxdWVzdENvbnRleHRQYXRoPi9maGlyPC9SZXF1ZXN0Q29udGV4dFBhdGg+CiAgICA8UGFyYW1ldGVycz4KICAgICAgICA8L1BhcmFtZXRlcnM+CiAgICA8SGVhZGVyPgogICAgICAgIDxBY2NlcHQ+YXBwbGljYXRpb24vZmhpcitqc29uPC9BY2NlcHQ+CiAgICAgICAgPENhY2hlLUNvbnRyb2w+bm8tY2FjaGU8L0NhY2hlLUNvbnRyb2w+CiAgICAgICAgPFVzZXItQWdlbnQ+UG9zdG1hblJ1bnRpbWUvNy41MS4wPC9Vc2VyLUFnZW50PgogICAgICAgIDxIb3N0PmVuZHBvaW50LmNsPC9Ib3N0PgogICAgICAgIDxBY2NlcHQtRW5jb2Rpbmc+Z3ppcCwgZGVmbGF0ZSwgYnI8L0FjY2VwdC1FbmNvZGluZz4KICAgICAgICA8Q29ubmVjdGlvbj5rZWVwLWFsaXZlPC9Db25uZWN0aW9uPgogICAgPC9IZWFkZXI+CiAgICA8Q29udGVudCBtdWx0aXBhcnQ9Im5vIj48L0NvbnRlbnQ+CjwvSHR0cFJlcXVlc3Q+</inboundTemplate>
+      <inboundTemplate encoding="base64">ewogICAgInJlc291cmNlVHlwZSI6ICJQYXRpZW50IiwKICAgICJpZCI6ICIxIiwKICAgICJpZGVudGlmaWVyIjogWwogICAgICAgIHsKICAgICAgICAgICAgInN5c3RlbSI6ICJodHRwOi8vZXhhbXBsZS5vcmcvZmhpci9ydXQiLAogICAgICAgICAgICAidmFsdWUiOiAiMjI3MDM0NTIiCiAgICAgICAgfQogICAgXSwKICAgICJhY3RpdmUiOiB0cnVlLAogICAgIm5hbWUiOiBbCiAgICAgICAgewogICAgICAgICAgICAiZmFtaWx5IjogIk1pcmFuZGFhYWFhIiwKICAgICAgICAgICAgImdpdmVuIjogWwogICAgICAgICAgICAgICAgIkFsZWphbmRybyIKICAgICAgICAgICAgXQogICAgICAgIH0KICAgIF0sCiAgICAidGVsZWNvbSI6IFsKICAgICAgICB7CiAgICAgICAgICAgICJzeXN0ZW0iOiAicGhvbmUiLAogICAgICAgICAgICAidmFsdWUiOiAiKzU2IDIgMzEzNCAxMjczIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgICAic3lzdGVtIjogImVtYWlsIiwKICAgICAgICAgICAgInZhbHVlIjogImVsaXNhYXJlbmFzQGV4YW1wbGUubmV0IgogICAgICAgIH0KICAgIF0sCiAgICAiZ2VuZGVyIjogInVua25vd24iLAogICAgImJpcnRoRGF0ZSI6ICIxOTk3LTAxLTIyIiwKICAgICJhZGRyZXNzIjogWwogICAgICAgIHsKICAgICAgICAgICAgImxpbmUiOiBbCiAgICAgICAgICAgICAgICAiRGFuaXR6YSBGaWNhIDEwMjQiCiAgICAgICAgICAgIF0sCiAgICAgICAgICAgICJjaXR5IjogIkZyZXNpYSIsCiAgICAgICAgICAgICJwb3N0YWxDb2RlIjogIjA3NjA1MTAiLAogICAgICAgICAgICAiY291bnRyeSI6ICJDTCIKICAgICAgICB9CiAgICBdCn0=</inboundTemplate>
       <outboundTemplate encoding="base64"></outboundTemplate>
-      <inboundDataType>RAW</inboundDataType>
+      <inboundDataType>JSON</inboundDataType>
       <outboundDataType>JSON</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
-        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
           <splitType>JavaScript</splitType>
           <batchScript></batchScript>
         </batchProperties>
@@ -141,12 +143,12 @@ function extractId(value) {
         <useProxyServer>false</useProxyServer>
         <proxyAddress></proxyAddress>
         <proxyPort></proxyPort>
-        <method>get</method>
+        <method>put</method>
         <headers class="linked-hash-map">
           <entry>
             <string>Content-Type</string>
             <list>
-              <string>application/fhir+json</string>
+              <string>application/json</string>
             </list>
           </entry>
         </headers>
@@ -166,16 +168,14 @@ function extractId(value) {
         <usePreemptiveAuthentication>false</usePreemptiveAuthentication>
         <username></username>
         <password></password>
-        <content></content>
-        <contentType>text/plain</contentType>
+        <content>${message.encodedData}</content>
+        <contentType>application/json</contentType>
         <dataTypeBinary>false</dataTypeBinary>
         <charset>UTF-8</charset>
         <socketTimeout>30000</socketTimeout>
       </properties>
       <transformer version="4.5.2">
         <elements/>
-        <inboundTemplate encoding="base64"></inboundTemplate>
-        <outboundTemplate encoding="base64"></outboundTemplate>
         <inboundDataType>JSON</inboundDataType>
         <outboundDataType>JSON</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
@@ -192,16 +192,7 @@ function extractId(value) {
         </outboundProperties>
       </transformer>
       <responseTransformer version="4.5.2">
-        <elements>
-          <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-            <sequenceNumber>0</sequenceNumber>
-            <enabled>true</enabled>
-            <script>// var ResponseMessage = response.getMessage();
-// logger.info(ResponseMessage)
-
- responseMap.put(&apos;response&apos;, response.getMessage());</script>
-          </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
-        </elements>
+        <elements/>
         <inboundTemplate encoding="base64"></inboundTemplate>
         <outboundTemplate encoding="base64"></outboundTemplate>
         <inboundDataType>JSON</inboundDataType>
@@ -277,7 +268,7 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769438797663</time>
+        <time>1769439631270</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
@@ -301,40 +292,6 @@ return;</undeployScript>
           <red>0</red>
           <green>204</green>
           <blue>204</blue>
-          <alpha>255</alpha>
-        </backgroundColor>
-      </channelTag>
-      <channelTag>
-        <id>1a4a26ea-7f63-4d20-b733-031822412896</id>
-        <name>raw</name>
-        <channelIds>
-          <string>22b2bfb6-6703-4446-8c02-f14eb5a230c5</string>
-          <string>c582b542-b52c-4c3a-a259-f1555333da8b</string>
-          <string>d88996fd-e486-4b5f-9d6e-cd8f86e369e4</string>
-          <string>477b6260-f1b7-4306-9691-be45b7b0debe</string>
-          <string>d5a62b7a-b9f0-46f7-9c9c-ab0c241d9acf</string>
-          <string>4f9678ab-87e1-4652-8055-d54decec2aa1</string>
-        </channelIds>
-        <backgroundColor>
-          <red>0</red>
-          <green>0</green>
-          <blue>255</blue>
-          <alpha>255</alpha>
-        </backgroundColor>
-      </channelTag>
-      <channelTag>
-        <id>b761a5a7-5f3b-4cbc-bcfd-88fb4dda0197</id>
-        <name>xml</name>
-        <channelIds>
-          <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
-          <string>58351fae-3d17-4437-b048-4b48ce3809c0</string>
-          <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
-          <string>4f9678ab-87e1-4652-8055-d54decec2aa1</string>
-        </channelIds>
-        <backgroundColor>
-          <red>128</red>
-          <green>0</green>
-          <blue>128</blue>
           <alpha>255</alpha>
         </backgroundColor>
       </channelTag>

@@ -1,9 +1,10 @@
 <channel version="4.5.2">
-  <id>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</id>
-  <nextMetaDataId>2</nextMetaDataId>
-  <name>014 - Canal Base64 Decodificador</name>
-  <description></description>
-  <revision>1</revision>
+  <id>22b2bfb6-6703-4446-8c02-f14eb5a230c5</id>
+  <nextMetaDataId>4</nextMetaDataId>
+  <name>0000b - Variables Globales</name>
+  <description>Establece 2 variables globales en el Global Scripts.
+Este canal muestra el valor de esas dos variables.</description>
+  <revision>2</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -27,81 +28,21 @@
     <transformer version="4.5.2">
       <elements>
         <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-          <name>codificador base64</name>
           <sequenceNumber>0</sequenceNumber>
           <enabled>true</enabled>
-          <script>// 1. Extraer el valor del JSON
-var contenidoBase64 = msg[&apos;encodedContent&apos;].toString();
+          <script>globalMap.put(&apos;SOURCE_FOLDER&apos; ,&apos;data/source/v2&apos;);
 
-// 2. Decodificar usando FileUtil
-// Esto devuelve un array de bytes
-var decodedBytes = FileUtil.decode(contenidoBase64);
+connectorMap.put(&apos;ID_PATIENT&apos;, 123);
 
-// 3. Convertir los bytes a String (Texto legible)
-var resultadoTexto = new java.lang.String(decodedBytes, &quot;UTF-8&quot;);
-
-// Opcional: Guardarlo en una variable de mapa para usarlo después
-channelMap.put(&quot;mensajeOriginal&quot;, resultadoTexto);
-
-
-
-msg = resultadoTexto;
-miXml = hl7ToXml(resultadoTexto);
-logger.info(&quot;hash2=&quot; + generateHash(resultadoTexto, &quot;SHA-256&quot;));
-
-/**
- * Convierte un String HL7 v2 a un objeto XML (E4X)
- * @param {String} hl7String - El mensaje HL7 en formato texto
- * @return {XML} Objeto XML listo para consultar
- */
-function hl7ToXml(hl7String) {
-    var serializer = SerializerFactory.getSerializer(&apos;HL7V2&apos;);
-    return new XML(serializer.toXML(hl7String));
-}
-
-
-// Ejemplo de uso:
-//var miXml = hl7ToXml(connectorMessage.getRawData());
-//var paciente = miXml[&apos;PID&apos;][&apos;PID.5&apos;][&apos;PID.5.1&apos;].toString();
-
-/**
- * Genera un hash a partir de un string de texto
- * @param {String} input - Texto a procesar
- * @param {String} algorithm - Ejemplo: &quot;SHA-256&quot;, &quot;MD5&quot;, &quot;SHA-1&quot;
- * @return {String} Hash en formato hexadecimal
- */
-function generateHash(input, algorithm) {
-    try {
-        if (!input) return &quot;&quot;;
-        
-        var digest = java.security.MessageDigest.getInstance(algorithm);
-        var hashBytes = digest.digest(input.getBytes(&quot;UTF-8&quot;));
-        
-        var hexString = new java.lang.StringBuilder();
-        for (var i = 0; i &lt; hashBytes.length; i++) {
-            var hex = java.lang.Integer.toHexString(0xff &amp; hashBytes[i]);
-            if (hex.length == 1) hexString.append(&apos;0&apos;);
-            hexString.append(hex);
-        }
-        
-        return hexString.toString();
-    } catch (e) {
-        logger.error(&quot;Error en generateHash: &quot; + e);
-        return null;
-    }
-}
-
-// --- Ejemplo de uso en un Transformer ---
-//var miHash = generateHash(connectorMessage.getRawData(), &quot;SHA-256&quot;);
-//channelMap.put(&quot;messageHash&quot;, miHash);</script>
+channelMap.put(&apos;MY_RESOURCE&apos;, { &apos;name&apos;: &apos;test&apos;});</script>
         </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
       </elements>
-      <inboundTemplate encoding="base64">ewoJIm1lc3NhZ2VJZCI6ICIxIiwKCSJlbmNvZGVkQ29udGVudCI6ICJhIiwKICAgICJoYXNoIjogImIiCn07</inboundTemplate>
+      <inboundTemplate encoding="base64"></inboundTemplate>
       <outboundTemplate encoding="base64"></outboundTemplate>
-      <inboundDataType>JSON</inboundDataType>
+      <inboundDataType>RAW</inboundDataType>
       <outboundDataType>RAW</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
-        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
+        <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
           <splitType>JavaScript</splitType>
           <batchScript></batchScript>
         </batchProperties>
@@ -123,8 +64,8 @@ function generateHash(input, algorithm) {
   </sourceConnector>
   <destinationConnectors>
     <connector version="4.5.2">
-      <metaDataId>1</metaDataId>
-      <name>Destination 1</name>
+      <metaDataId>3</metaDataId>
+      <name>mostrar variables en logger</name>
       <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
         <pluginProperties/>
         <destinationConnectorProperties version="4.5.2">
@@ -147,7 +88,21 @@ function generateHash(input, algorithm) {
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>logger.info(&quot;decoded message=&quot; + connectorMessage.getEncodedData());</script>
+        <script>// Velocity
+logger.info(&quot;SOURCE_FOLDER(velocity)=&quot; + $(&apos;SOURCE_FOLDER&apos;));
+
+
+// GlobalMap.get
+logger.info(&apos;SOURCE_FOLDER(globalMap.get()=&apos; + globalMap.get(&apos;SOURCE_FOLDER&apos;));
+
+// Channel
+logger.info(&quot;channelMap.get&quot; + channelMap.get(&apos;MY_RESOURCE&apos;));
+logger.info(&quot;channelMap.get&quot; + JSON.stringify(channelMap.get(&apos;MY_RESOURCE&apos;)));
+
+//Connector --&gt; Devolvera nulo, ya que el alcance de la variable no es visto desde esta Destination
+logger.info(&apos;connectorMap.get()=&apos; + connectorMap.get(&apos;ID_PATIENT&apos;));
+
+</script>
       </properties>
       <transformer version="4.5.2">
         <elements/>
@@ -199,6 +154,7 @@ return message;</preprocessingScript>
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
+logger.info(&quot;Channel Deploy=&quot; + channelName);
 return;</deployScript>
   <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
@@ -241,27 +197,52 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769385763812</time>
+        <time>1769433577758</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
+      <pruningSettings>
+        <archiveEnabled>true</archiveEnabled>
+        <pruneErroredMessages>false</pruneErroredMessages>
+      </pruningSettings>
+      <userId>1</userId>
     </metadata>
     <channelTags>
       <channelTag>
-        <id>b29a759a-79f8-45af-ab56-ee5a1b770367</id>
-        <name>hard</name>
+        <id>a8d2beac-637a-44e0-9eef-ddcf53139dd3</id>
+        <name>easy</name>
         <channelIds>
-          <string>881a6aef-8f85-4a61-b07e-47f556a91655</string>
-          <string>0db27dec-a4ae-44ab-a03d-e278f25eb894</string>
-          <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
-          <string>f5066aba-9341-4927-a952-451a197b076c</string>
-          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
-          <string>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</string>
-          <string>c36331d6-959d-430f-a502-437161f1fbab</string>
+          <string>22b2bfb6-6703-4446-8c02-f14eb5a230c5</string>
+          <string>6ae7b2c6-fcc0-4399-bbd7-e516d596ade6</string>
+          <string>58351fae-3d17-4437-b048-4b48ce3809c0</string>
+          <string>1e61610b-a229-44da-bb44-7888dc780213</string>
+          <string>8f47fbaf-5fb3-4143-99fa-c5088748053c</string>
+          <string>a2811665-c1fd-4ead-b7ad-ffb5dcc00c73</string>
+          <string>6330fdcb-ab53-4ab3-bdc4-13d6cba4dbcd</string>
+          <string>62499f89-9b58-4c3f-9f7a-92e7a031826c</string>
+          <string>e610d5a0-33a1-4da0-ac05-d0597733e3bb</string>
         </channelIds>
         <backgroundColor>
           <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+      <channelTag>
+        <id>1a4a26ea-7f63-4d20-b733-031822412896</id>
+        <name>raw</name>
+        <channelIds>
+          <string>22b2bfb6-6703-4446-8c02-f14eb5a230c5</string>
+          <string>c582b542-b52c-4c3a-a259-f1555333da8b</string>
+          <string>d88996fd-e486-4b5f-9d6e-cd8f86e369e4</string>
+          <string>477b6260-f1b7-4306-9691-be45b7b0debe</string>
+          <string>d5a62b7a-b9f0-46f7-9c9c-ab0c241d9acf</string>
+          <string>4f9678ab-87e1-4652-8055-d54decec2aa1</string>
+        </channelIds>
+        <backgroundColor>
+          <red>0</red>
           <green>0</green>
-          <blue>51</blue>
+          <blue>255</blue>
           <alpha>255</alpha>
         </backgroundColor>
       </channelTag>

@@ -1,9 +1,11 @@
 <channel version="4.5.2">
-  <id>67d912c4-47a5-42ba-be12-dd77ff24dec9</id>
-  <nextMetaDataId>2</nextMetaDataId>
-  <name>010 - LLP Server - Port 6001</name>
-  <description></description>
-  <revision>2</revision>
+  <id>a2811665-c1fd-4ead-b7ad-ffb5dcc00c73</id>
+  <nextMetaDataId>3</nextMetaDataId>
+  <name>0000a - Orden de ejecucion en el canal</name>
+  <description>Canal simple que recibe HL7 v2.x por MLLP en el puerto 6001 y lo guarda en un directorio.&#xd;
+Se hace un log en cada script, transformador y filtro para mostar el orden de ejecución de los mismos.&#xd;
+Los mensajes pueden ser enviados por HAPI Test Panel, no importa el tipo de mensaje.</description>
+  <revision>6</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -11,10 +13,10 @@
       <pluginProperties/>
       <listenerConnectorProperties version="4.5.2">
         <host>0.0.0.0</host>
-        <port>6661</port>
+        <port>6001</port>
       </listenerConnectorProperties>
       <sourceConnectorProperties version="4.5.2">
-        <responseVariable>Auto-generate (After source transformer)</responseVariable>
+        <responseVariable>ackresp</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
         <processBatch>false</processBatch>
         <firstResponse>true</firstResponse>
@@ -52,7 +54,22 @@
       <responsePort></responsePort>
     </properties>
     <transformer version="4.5.2">
-      <elements/>
+      <elements>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>Log</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>true</enabled>
+          <script>logger.info(&quot;Source Transformer Step 1&quot;);</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>Log 2</name>
+          <sequenceNumber>1</sequenceNumber>
+          <enabled>true</enabled>
+          <script>logger.info(&quot;Source Transformer Step 2&quot;);</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+      </elements>
+      <inboundTemplate encoding="base64">TVNIfF5+XCZ8U1lTVEVNfEhPU1BJVEFMfEFEVHxMQUJ8MjAyNTAxMDQxMDMwfHxBRFReQTAxfEREQjkxNDk4fFB8Mi4zfApQSUR8MXx8NzY1MENFNTF8fEphcmVkIEdyYXl8fDE5ODEwMTAxfE18fHwyMDIgVW5rbm93biBCbHZkXl5DaXR5XlNUXjAwMDAwXlVTQQpFVk58QTAxfDIwMjUwMTA0MDkwMHx8fEFkbWluXlVzZXIKUFYxfDF8SXxJQ1VeMTIzNF4xXkhvc3BpdGFsfHx8MTIzNDVeUGh5c2ljaWFuXkpvaG5eQV5eRHIufA==</inboundTemplate>
+      <outboundTemplate encoding="base64"></outboundTemplate>
       <inboundDataType>HL7V2</inboundDataType>
       <outboundDataType>HL7V2</outboundDataType>
       <inboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.2">
@@ -135,7 +152,37 @@
       </outboundProperties>
     </transformer>
     <filter version="4.5.2">
-      <elements/>
+      <elements>
+        <com.mirth.connect.plugins.javascriptrule.JavaScriptRule version="4.5.2">
+          <name>log</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>true</enabled>
+          <script>logger.info(&quot;Source Filter Step 1&quot;);
+
+return true;</script>
+        </com.mirth.connect.plugins.javascriptrule.JavaScriptRule>
+        <com.mirth.connect.plugins.javascriptrule.JavaScriptRule version="4.5.2">
+          <name>log 2</name>
+          <sequenceNumber>1</sequenceNumber>
+          <enabled>true</enabled>
+          <operator>AND</operator>
+          <script>logger.info(&quot;Source Filter Step 2&quot;);
+
+
+return true;</script>
+        </com.mirth.connect.plugins.javascriptrule.JavaScriptRule>
+        <com.mirth.connect.plugins.rulebuilder.RuleBuilderRule version="4.5.2">
+          <name>Accept message if &quot;msg[&apos;MSH&apos;][&apos;MSH.9&apos;][&apos;MSH.9.1&apos;].toString()&quot; equals &apos;ADT&apos;</name>
+          <sequenceNumber>2</sequenceNumber>
+          <enabled>true</enabled>
+          <operator>AND</operator>
+          <field>msg[&apos;MSH&apos;][&apos;MSH.9&apos;][&apos;MSH.9.1&apos;].toString()</field>
+          <condition>EQUALS</condition>
+          <values>
+            <string>&apos;ADT&apos;</string>
+          </values>
+        </com.mirth.connect.plugins.rulebuilder.RuleBuilderRule>
+      </elements>
     </filter>
     <transportName>TCP Listener</transportName>
     <mode>SOURCE</mode>
@@ -168,10 +215,23 @@
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>logger.info(&quot;LLP Server received message=&quot; + connectorMessage.getEncodedData());</script>
+        <script>logger.info(&quot;Destionation1=&quot; + connectorMessage.getEncodedData());</script>
       </properties>
       <transformer version="4.5.2">
-        <elements/>
+        <elements>
+          <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+            <name>Log</name>
+            <sequenceNumber>0</sequenceNumber>
+            <enabled>true</enabled>
+            <script>logger.info(&quot;Destination 1 Transformer&quot;);
+
+// http://207.38.40.43/community/forums/showthread.php?p=44212
+var ackMessage = ACKGenerator.generateAckResponse(connectorMessage.getRawData(), &quot;AA&quot;, &quot;Message Successfully Received&quot;);
+responseMap.put(&quot;ackresp&quot;, ResponseFactory.getSentResponse(ackMessage));</script>
+          </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        </elements>
+        <inboundTemplate encoding="base64"></inboundTemplate>
+        <outboundTemplate encoding="base64"></outboundTemplate>
         <inboundDataType>HL7V2</inboundDataType>
         <outboundDataType>HL7V2</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.2">
@@ -254,7 +314,22 @@
         </outboundProperties>
       </transformer>
       <responseTransformer version="4.5.2">
-        <elements/>
+        <elements>
+          <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+            <name>Log</name>
+            <sequenceNumber>0</sequenceNumber>
+            <enabled>true</enabled>
+            <script>logger.info(&quot;Destination 1 Response Transformer&quot;);
+
+// Devuelve un string para ser serializado como HL7 v2 ACK en el response
+// Tambien se puede construir un ACK con la API de Mirth --&gt; ACKGenerator
+
+return &quot;MSH|^~\&amp;|IFENG||REGADT|MCM|20160729023454||ACK^A04^ACK|20160729023454|P|2.5\r&quot; +
+       &quot;MSA|AA|&quot;+ connectorMessage.getMessageId() +&quot;\r&quot;;</script>
+          </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        </elements>
+        <inboundTemplate encoding="base64"></inboundTemplate>
+        <outboundTemplate encoding="base64"></outboundTemplate>
         <inboundDataType>HL7V2</inboundDataType>
         <outboundDataType>HL7V2</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties" version="4.5.2">
@@ -337,7 +412,16 @@
         </outboundProperties>
       </responseTransformer>
       <filter version="4.5.2">
-        <elements/>
+        <elements>
+          <com.mirth.connect.plugins.javascriptrule.JavaScriptRule version="4.5.2">
+            <name>Log</name>
+            <sequenceNumber>0</sequenceNumber>
+            <enabled>true</enabled>
+            <script>logger.info(&quot;Destination 1 Filter&quot;);
+
+return true;</script>
+          </com.mirth.connect.plugins.javascriptrule.JavaScriptRule>
+        </elements>
       </filter>
       <transportName>JavaScript Writer</transportName>
       <mode>DESTINATION</mode>
@@ -346,15 +430,26 @@
     </connector>
   </destinationConnectors>
   <preprocessingScript>// Modify the message variable below to pre process data
+
+logger.info(&quot;Channel Preprocessor&quot;);
+
 return message;</preprocessingScript>
   <postprocessingScript>// This script executes once after a message has been processed
 // Responses returned from here will be stored as &quot;Postprocessor&quot; in the response map
+logger.info(&quot;Channel Postprocessor&quot;);
+
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
+
+logger.info(&quot;Channel Deploy=&quot; + channelName);
+
 return;</deployScript>
   <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
+
+logger.info(&quot;Channel Undeploy&quot;);
+
 return;</undeployScript>
   <properties version="4.5.2">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
@@ -366,7 +461,7 @@ return;</undeployScript>
     <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
     <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
     <initialState>STARTED</initialState>
-    <storeAttachments>true</storeAttachments>
+    <storeAttachments>false</storeAttachments>
     <metaDataColumns>
       <metaDataColumn>
         <name>SOURCE</name>
@@ -394,17 +489,66 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769445730675</time>
+        <time>1769433086896</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
+        <pruneMetaDataDays>1</pruneMetaDataDays>
+        <pruneContentDays>1</pruneContentDays>
         <archiveEnabled>true</archiveEnabled>
         <pruneErroredMessages>false</pruneErroredMessages>
       </pruningSettings>
       <userId>1</userId>
     </metadata>
-    <dependentIds>
-      <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
-    </dependentIds>
+    <channelTags>
+      <channelTag>
+        <id>a8d2beac-637a-44e0-9eef-ddcf53139dd3</id>
+        <name>easy</name>
+        <channelIds>
+          <string>22b2bfb6-6703-4446-8c02-f14eb5a230c5</string>
+          <string>6ae7b2c6-fcc0-4399-bbd7-e516d596ade6</string>
+          <string>58351fae-3d17-4437-b048-4b48ce3809c0</string>
+          <string>1e61610b-a229-44da-bb44-7888dc780213</string>
+          <string>8f47fbaf-5fb3-4143-99fa-c5088748053c</string>
+          <string>a2811665-c1fd-4ead-b7ad-ffb5dcc00c73</string>
+          <string>6330fdcb-ab53-4ab3-bdc4-13d6cba4dbcd</string>
+          <string>62499f89-9b58-4c3f-9f7a-92e7a031826c</string>
+          <string>e610d5a0-33a1-4da0-ac05-d0597733e3bb</string>
+        </channelIds>
+        <backgroundColor>
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+      <channelTag>
+        <id>03d6305f-c077-4ea9-b7d8-f46b9a2b5fb0</id>
+        <name>HL7v2</name>
+        <channelIds>
+          <string>e170cdc0-022b-4160-b259-ded4776d4258</string>
+          <string>a2811665-c1fd-4ead-b7ad-ffb5dcc00c73</string>
+          <string>a3adc191-76bc-4623-b675-627c052b1e9c</string>
+          <string>17a2d374-8791-4075-a6d6-c07c74ea9024</string>
+          <string>6748bfe4-cb40-469a-bee3-b30128c7fb88</string>
+          <string>31ec515e-8e40-468e-8f6e-89912d81308c</string>
+          <string>32d53741-d577-411d-bbc5-eae8a0af9050</string>
+          <string>ead6e735-1ed0-4334-9f5b-8f40761aa1f5</string>
+          <string>1661c73e-47d5-42ba-9671-1b8398dba2b3</string>
+          <string>6330fdcb-ab53-4ab3-bdc4-13d6cba4dbcd</string>
+          <string>47f25c2b-b347-4c08-8202-2b7f49eff283</string>
+          <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
+          <string>2f25ad07-5cea-4cbd-8a01-7c48fe6d50a4</string>
+          <string>fdf99305-f331-498a-af50-adfe60af87f7</string>
+          <string>ea2163a0-3787-4951-92f0-64dea4117732</string>
+        </channelIds>
+        <backgroundColor>
+          <red>204</red>
+          <green>255</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+    </channelTags>
   </exportData>
 </channel>

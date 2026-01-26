@@ -6,7 +6,7 @@
 EVN|A01|20231027103000|||OPERADOR_01
 PID|1||123456789^^^MRN^MR||김^철수^金哲秀||19850520|M|||北京市朝阳区太阳宫^^Beijing^BJ^100028^CHN||600123456^^PH|||S|||12345678X|
 PV1|1|I|URG^BOX1^01||||1234^PEREZ^ALBERTO|||||||||||V1001|||||||||||||||||||||||||20231027102500|</description>
-  <revision>13</revision>
+  <revision>1</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -311,7 +311,6 @@ return;</undeployScript>
       </pruningSettings>
       <userId>1</userId>
     </metadata>
-    <codeTemplateLibraries/>
     <channelTags>
       <channelTag>
         <id>b29a759a-79f8-45af-ab56-ee5a1b770367</id>
@@ -321,7 +320,9 @@ return;</undeployScript>
           <string>0db27dec-a4ae-44ab-a03d-e278f25eb894</string>
           <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
           <string>f5066aba-9341-4927-a952-451a197b076c</string>
+          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
           <string>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</string>
+          <string>c36331d6-959d-430f-a502-437161f1fbab</string>
         </channelIds>
         <backgroundColor>
           <red>255</red>

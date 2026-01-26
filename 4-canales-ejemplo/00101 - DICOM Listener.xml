@@ -1,14 +1,18 @@
 <channel version="4.5.2">
-  <id>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</id>
+  <id>f41d1823-91e7-4c85-bbce-961e3a34be06</id>
   <nextMetaDataId>2</nextMetaDataId>
-  <name>014 - Canal Base64 Decodificador</name>
+  <name>00101 - DICOM Listener</name>
   <description></description>
   <revision>1</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
+    <properties class="com.mirth.connect.connectors.dimse.DICOMReceiverProperties" version="4.5.2">
       <pluginProperties/>
+      <listenerConnectorProperties version="4.5.2">
+        <host>0.0.0.0</host>
+        <port>104</port>
+      </listenerConnectorProperties>
       <sourceConnectorProperties version="4.5.2">
         <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
@@ -23,89 +27,42 @@
         </resourceIds>
         <queueBufferSize>1000</queueBufferSize>
       </sourceConnectorProperties>
+      <applicationEntity></applicationEntity>
+      <localHost></localHost>
+      <localPort></localPort>
+      <localApplicationEntity></localApplicationEntity>
+      <soCloseDelay>50</soCloseDelay>
+      <releaseTo>5</releaseTo>
+      <requestTo>5</requestTo>
+      <idleTo>60</idleTo>
+      <reaper>10</reaper>
+      <rspDelay>0</rspDelay>
+      <pdv1>false</pdv1>
+      <sndpdulen>16</sndpdulen>
+      <rcvpdulen>16</rcvpdulen>
+      <async>0</async>
+      <bigEndian>false</bigEndian>
+      <bufSize>1</bufSize>
+      <defts>false</defts>
+      <dest></dest>
+      <nativeData>false</nativeData>
+      <sorcvbuf>0</sorcvbuf>
+      <sosndbuf>0</sosndbuf>
+      <tcpDelay>true</tcpDelay>
+      <keyPW></keyPW>
+      <keyStore></keyStore>
+      <keyStorePW></keyStorePW>
+      <noClientAuth>true</noClientAuth>
+      <nossl2>true</nossl2>
+      <tls>notls</tls>
+      <trustStore></trustStore>
+      <trustStorePW></trustStorePW>
     </properties>
     <transformer version="4.5.2">
-      <elements>
-        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-          <name>codificador base64</name>
-          <sequenceNumber>0</sequenceNumber>
-          <enabled>true</enabled>
-          <script>// 1. Extraer el valor del JSON
-var contenidoBase64 = msg[&apos;encodedContent&apos;].toString();
-
-// 2. Decodificar usando FileUtil
-// Esto devuelve un array de bytes
-var decodedBytes = FileUtil.decode(contenidoBase64);
-
-// 3. Convertir los bytes a String (Texto legible)
-var resultadoTexto = new java.lang.String(decodedBytes, &quot;UTF-8&quot;);
-
-// Opcional: Guardarlo en una variable de mapa para usarlo después
-channelMap.put(&quot;mensajeOriginal&quot;, resultadoTexto);
-
-
-
-msg = resultadoTexto;
-miXml = hl7ToXml(resultadoTexto);
-logger.info(&quot;hash2=&quot; + generateHash(resultadoTexto, &quot;SHA-256&quot;));
-
-/**
- * Convierte un String HL7 v2 a un objeto XML (E4X)
- * @param {String} hl7String - El mensaje HL7 en formato texto
- * @return {XML} Objeto XML listo para consultar
- */
-function hl7ToXml(hl7String) {
-    var serializer = SerializerFactory.getSerializer(&apos;HL7V2&apos;);
-    return new XML(serializer.toXML(hl7String));
-}
-
-
-// Ejemplo de uso:
-//var miXml = hl7ToXml(connectorMessage.getRawData());
-//var paciente = miXml[&apos;PID&apos;][&apos;PID.5&apos;][&apos;PID.5.1&apos;].toString();
-
-/**
- * Genera un hash a partir de un string de texto
- * @param {String} input - Texto a procesar
- * @param {String} algorithm - Ejemplo: &quot;SHA-256&quot;, &quot;MD5&quot;, &quot;SHA-1&quot;
- * @return {String} Hash en formato hexadecimal
- */
-function generateHash(input, algorithm) {
-    try {
-        if (!input) return &quot;&quot;;
-        
-        var digest = java.security.MessageDigest.getInstance(algorithm);
-        var hashBytes = digest.digest(input.getBytes(&quot;UTF-8&quot;));
-        
-        var hexString = new java.lang.StringBuilder();
-        for (var i = 0; i &lt; hashBytes.length; i++) {
-            var hex = java.lang.Integer.toHexString(0xff &amp; hashBytes[i]);
-            if (hex.length == 1) hexString.append(&apos;0&apos;);
-            hexString.append(hex);
-        }
-        
-        return hexString.toString();
-    } catch (e) {
-        logger.error(&quot;Error en generateHash: &quot; + e);
-        return null;
-    }
-}
-
-// --- Ejemplo de uso en un Transformer ---
-//var miHash = generateHash(connectorMessage.getRawData(), &quot;SHA-256&quot;);
-//channelMap.put(&quot;messageHash&quot;, miHash);</script>
-        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
-      </elements>
-      <inboundTemplate encoding="base64">ewoJIm1lc3NhZ2VJZCI6ICIxIiwKCSJlbmNvZGVkQ29udGVudCI6ICJhIiwKICAgICJoYXNoIjogImIiCn07</inboundTemplate>
-      <outboundTemplate encoding="base64"></outboundTemplate>
-      <inboundDataType>JSON</inboundDataType>
+      <elements/>
+      <inboundDataType>DICOM</inboundDataType>
       <outboundDataType>RAW</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
-        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
-          <splitType>JavaScript</splitType>
-          <batchScript></batchScript>
-        </batchProperties>
-      </inboundProperties>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.dicom.DICOMDataTypeProperties" version="4.5.2"/>
       <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties" version="4.5.2">
         <batchProperties class="com.mirth.connect.plugins.datatypes.raw.RawBatchProperties" version="4.5.2">
           <splitType>JavaScript</splitType>
@@ -116,7 +73,7 @@ function generateHash(input, algorithm) {
     <filter version="4.5.2">
       <elements/>
     </filter>
-    <transportName>Channel Reader</transportName>
+    <transportName>DICOM Listener</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
     <waitForPrevious>true</waitForPrevious>
@@ -125,7 +82,7 @@ function generateHash(input, algorithm) {
     <connector version="4.5.2">
       <metaDataId>1</metaDataId>
       <name>Destination 1</name>
-      <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
+      <properties class="com.mirth.connect.connectors.vm.VmDispatcherProperties" version="4.5.2">
         <pluginProperties/>
         <destinationConnectorProperties version="4.5.2">
           <queueEnabled>false</queueEnabled>
@@ -147,7 +104,9 @@ function generateHash(input, algorithm) {
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>logger.info(&quot;decoded message=&quot; + connectorMessage.getEncodedData());</script>
+        <channelId>none</channelId>
+        <channelTemplate>${message.encodedData}</channelTemplate>
+        <mapVariables/>
       </properties>
       <transformer version="4.5.2">
         <elements/>
@@ -186,7 +145,7 @@ function generateHash(input, algorithm) {
       <filter version="4.5.2">
         <elements/>
       </filter>
-      <transportName>JavaScript Writer</transportName>
+      <transportName>Channel Writer</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
@@ -227,7 +186,8 @@ return;</undeployScript>
       </metaDataColumn>
     </metaDataColumns>
     <attachmentProperties version="4.5.2">
-      <type>None</type>
+      <className>com.mirth.connect.server.attachments.dicom.DICOMAttachmentHandlerProvider</className>
+      <type>DICOM</type>
       <properties/>
     </attachmentProperties>
     <resourceIds class="linked-hash-map">
@@ -241,11 +201,50 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769385763812</time>
+        <time>1769434075249</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
+      <pruningSettings>
+        <archiveEnabled>true</archiveEnabled>
+        <pruneErroredMessages>false</pruneErroredMessages>
+      </pruningSettings>
+      <userId>1</userId>
     </metadata>
     <channelTags>
+      <channelTag>
+        <id>a179b685-0749-44a5-b995-970a0a889463</id>
+        <name>connectors</name>
+        <channelIds>
+          <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
+          <string>f11591a4-a387-4991-9901-0ac66f0f8a8d</string>
+          <string>c582b542-b52c-4c3a-a259-f1555333da8b</string>
+          <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
+          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
+          <string>d88996fd-e486-4b5f-9d6e-cd8f86e369e4</string>
+          <string>477b6260-f1b7-4306-9691-be45b7b0debe</string>
+          <string>d5a62b7a-b9f0-46f7-9c9c-ab0c241d9acf</string>
+          <string>ea2163a0-3787-4951-92f0-64dea4117732</string>
+        </channelIds>
+        <backgroundColor>
+          <red>128</red>
+          <green>128</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+      <channelTag>
+        <id>4e94c301-862f-44ca-b0d0-4e2189140ac2</id>
+        <name>dicom</name>
+        <channelIds>
+          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
+        </channelIds>
+        <backgroundColor>
+          <red>128</red>
+          <green>0</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
       <channelTag>
         <id>b29a759a-79f8-45af-ab56-ee5a1b770367</id>
         <name>hard</name>

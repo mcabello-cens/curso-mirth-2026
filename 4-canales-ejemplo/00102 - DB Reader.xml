@@ -1,14 +1,41 @@
 <channel version="4.5.2">
-  <id>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</id>
+  <id>b87963e1-648e-4364-9f0b-ad24490cb9df</id>
   <nextMetaDataId>2</nextMetaDataId>
-  <name>014 - Canal Base64 Decodificador</name>
+  <name>00102 - DB Reader</name>
   <description></description>
-  <revision>1</revision>
+  <revision>2</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
+    <properties class="com.mirth.connect.connectors.jdbc.DatabaseReceiverProperties" version="4.5.2">
       <pluginProperties/>
+      <pollConnectorProperties version="4.5.2">
+        <pollingType>INTERVAL</pollingType>
+        <pollOnStart>false</pollOnStart>
+        <pollingFrequency>5000</pollingFrequency>
+        <pollingHour>0</pollingHour>
+        <pollingMinute>0</pollingMinute>
+        <cronJobs/>
+        <pollConnectorPropertiesAdvanced>
+          <weekly>true</weekly>
+          <inactiveDays>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+            <boolean>false</boolean>
+          </inactiveDays>
+          <dayOfMonth>1</dayOfMonth>
+          <allDay>true</allDay>
+          <startingHour>8</startingHour>
+          <startingMinute>0</startingMinute>
+          <endingHour>17</endingHour>
+          <endingMinute>0</endingMinute>
+        </pollConnectorPropertiesAdvanced>
+      </pollConnectorProperties>
       <sourceConnectorProperties version="4.5.2">
         <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
@@ -23,86 +50,48 @@
         </resourceIds>
         <queueBufferSize>1000</queueBufferSize>
       </sourceConnectorProperties>
+      <driver>org.postgresql.Driver</driver>
+      <url>jdbc:postgresql://ehr-db:5432/postgres</url>
+      <username>admin</username>
+      <password>admin</password>
+      <select>SELECT medicos.id AS medicos_id, medicos.rnpi AS medicos_rnpi, medicos.nombre AS medicos_nombre, medicos.apellido_paterno AS medicos_apellido_paterno, medicos.apellido_materno AS medicos_apellido_materno, medicos.telefono AS medicos_telefono, medicos.email AS medicos_email, medicos.especialidad_id AS medicos_especialidad_id
+FROM citas.medicos
+
+</select>
+      <update></update>
+      <useScript>false</useScript>
+      <aggregateResults>false</aggregateResults>
+      <cacheResults>true</cacheResults>
+      <keepConnectionOpen>true</keepConnectionOpen>
+      <updateMode>1</updateMode>
+      <retryCount>3</retryCount>
+      <retryInterval>10000</retryInterval>
+      <fetchSize>1000</fetchSize>
+      <encoding>UTF-8</encoding>
     </properties>
     <transformer version="4.5.2">
       <elements>
         <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-          <name>codificador base64</name>
           <sequenceNumber>0</sequenceNumber>
           <enabled>true</enabled>
-          <script>// 1. Extraer el valor del JSON
-var contenidoBase64 = msg[&apos;encodedContent&apos;].toString();
+          <script>logger.info(&quot;valor=&quot; + msg[&apos;medicos_nombre&apos;].toString());
 
-// 2. Decodificar usando FileUtil
-// Esto devuelve un array de bytes
-var decodedBytes = FileUtil.decode(contenidoBase64);
-
-// 3. Convertir los bytes a String (Texto legible)
-var resultadoTexto = new java.lang.String(decodedBytes, &quot;UTF-8&quot;);
-
-// Opcional: Guardarlo en una variable de mapa para usarlo después
-channelMap.put(&quot;mensajeOriginal&quot;, resultadoTexto);
-
-
-
-msg = resultadoTexto;
-miXml = hl7ToXml(resultadoTexto);
-logger.info(&quot;hash2=&quot; + generateHash(resultadoTexto, &quot;SHA-256&quot;));
-
-/**
- * Convierte un String HL7 v2 a un objeto XML (E4X)
- * @param {String} hl7String - El mensaje HL7 en formato texto
- * @return {XML} Objeto XML listo para consultar
- */
-function hl7ToXml(hl7String) {
-    var serializer = SerializerFactory.getSerializer(&apos;HL7V2&apos;);
-    return new XML(serializer.toXML(hl7String));
-}
-
-
-// Ejemplo de uso:
-//var miXml = hl7ToXml(connectorMessage.getRawData());
-//var paciente = miXml[&apos;PID&apos;][&apos;PID.5&apos;][&apos;PID.5.1&apos;].toString();
-
-/**
- * Genera un hash a partir de un string de texto
- * @param {String} input - Texto a procesar
- * @param {String} algorithm - Ejemplo: &quot;SHA-256&quot;, &quot;MD5&quot;, &quot;SHA-1&quot;
- * @return {String} Hash en formato hexadecimal
- */
-function generateHash(input, algorithm) {
-    try {
-        if (!input) return &quot;&quot;;
-        
-        var digest = java.security.MessageDigest.getInstance(algorithm);
-        var hashBytes = digest.digest(input.getBytes(&quot;UTF-8&quot;));
-        
-        var hexString = new java.lang.StringBuilder();
-        for (var i = 0; i &lt; hashBytes.length; i++) {
-            var hex = java.lang.Integer.toHexString(0xff &amp; hashBytes[i]);
-            if (hex.length == 1) hexString.append(&apos;0&apos;);
-            hexString.append(hex);
-        }
-        
-        return hexString.toString();
-    } catch (e) {
-        logger.error(&quot;Error en generateHash: &quot; + e);
-        return null;
-    }
-}
-
-// --- Ejemplo de uso en un Transformer ---
-//var miHash = generateHash(connectorMessage.getRawData(), &quot;SHA-256&quot;);
-//channelMap.put(&quot;messageHash&quot;, miHash);</script>
+return msg;</script>
         </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
       </elements>
-      <inboundTemplate encoding="base64">ewoJIm1lc3NhZ2VJZCI6ICIxIiwKCSJlbmNvZGVkQ29udGVudCI6ICJhIiwKICAgICJoYXNoIjogImIiCn07</inboundTemplate>
+      <inboundTemplate encoding="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8cmVzdWx0Pg0KICAgIDxtZWRpY29zX2lkPnZhbHVlPC9tZWRpY29zX2lkPg0KICAgIDxtZWRpY29zX3JucGk+dmFsdWU8L21lZGljb3Nfcm5waT4NCiAgICA8bWVkaWNvc19ub21icmU+dmFsdWU8L21lZGljb3Nfbm9tYnJlPg0KICAgIDxtZWRpY29zX2FwZWxsaWRvX3BhdGVybm8+dmFsdWU8L21lZGljb3NfYXBlbGxpZG9fcGF0ZXJubz4NCiAgICA8bWVkaWNvc19hcGVsbGlkb19tYXRlcm5vPnZhbHVlPC9tZWRpY29zX2FwZWxsaWRvX21hdGVybm8+DQogICAgPG1lZGljb3NfdGVsZWZvbm8+dmFsdWU8L21lZGljb3NfdGVsZWZvbm8+DQogICAgPG1lZGljb3NfZW1haWw+dmFsdWU8L21lZGljb3NfZW1haWw+DQogICAgPG1lZGljb3NfZXNwZWNpYWxpZGFkX2lkPnZhbHVlPC9tZWRpY29zX2VzcGVjaWFsaWRhZF9pZD4NCjwvcmVzdWx0Pg0K</inboundTemplate>
       <outboundTemplate encoding="base64"></outboundTemplate>
-      <inboundDataType>JSON</inboundDataType>
+      <inboundDataType>XML</inboundDataType>
       <outboundDataType>RAW</outboundDataType>
-      <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
-        <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
-          <splitType>JavaScript</splitType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
+        <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
+          <stripNamespaces>false</stripNamespaces>
+        </serializationProperties>
+        <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
+          <splitType>Element_Name</splitType>
+          <elementName></elementName>
+          <level>1</level>
+          <query></query>
           <batchScript></batchScript>
         </batchProperties>
       </inboundProperties>
@@ -116,7 +105,7 @@ function generateHash(input, algorithm) {
     <filter version="4.5.2">
       <elements/>
     </filter>
-    <transportName>Channel Reader</transportName>
+    <transportName>Database Reader</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
     <waitForPrevious>true</waitForPrevious>
@@ -147,7 +136,7 @@ function generateHash(input, algorithm) {
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>logger.info(&quot;decoded message=&quot; + connectorMessage.getEncodedData());</script>
+        <script>logger.info(connectorMessage.getEncodedData());</script>
       </properties>
       <transformer version="4.5.2">
         <elements/>
@@ -199,13 +188,17 @@ return message;</preprocessingScript>
 return;</postprocessingScript>
   <deployScript>// This script executes once when the channel is deployed
 // You only have access to the globalMap and globalChannelMap here to persist data
+
+globalMap.put(&apos;cadenaConexion1&apos;, &apos;jdbc:postgresql://ehr-db:5432/postgres&apos;);
+globalMap.put(&apos;cadenaConexion2&apos;, &apos;jdbc:postgresql://localhost:5433/postgres&apos;);
+
 return;</deployScript>
   <undeployScript>// This script executes once when the channel is undeployed
 // You only have access to the globalMap and globalChannelMap here to persist data
 return;</undeployScript>
   <properties version="4.5.2">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
-    <messageStorageMode>DEVELOPMENT</messageStorageMode>
+    <messageStorageMode>PRODUCTION</messageStorageMode>
     <encryptData>false</encryptData>
     <encryptAttachments>false</encryptAttachments>
     <encryptCustomMetaData>false</encryptCustomMetaData>
@@ -241,27 +234,51 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769385763812</time>
+        <time>1769434243089</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
+      <pruningSettings>
+        <pruneMetaDataDays>1</pruneMetaDataDays>
+        <archiveEnabled>true</archiveEnabled>
+        <pruneErroredMessages>false</pruneErroredMessages>
+      </pruningSettings>
+      <userId>1</userId>
     </metadata>
     <channelTags>
       <channelTag>
-        <id>b29a759a-79f8-45af-ab56-ee5a1b770367</id>
-        <name>hard</name>
+        <id>a179b685-0749-44a5-b995-970a0a889463</id>
+        <name>connectors</name>
         <channelIds>
-          <string>881a6aef-8f85-4a61-b07e-47f556a91655</string>
-          <string>0db27dec-a4ae-44ab-a03d-e278f25eb894</string>
-          <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
-          <string>f5066aba-9341-4927-a952-451a197b076c</string>
+          <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
+          <string>f11591a4-a387-4991-9901-0ac66f0f8a8d</string>
+          <string>c582b542-b52c-4c3a-a259-f1555333da8b</string>
+          <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
           <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
-          <string>9794ee2e-2fec-4cfc-84a9-cf024ce23a54</string>
-          <string>c36331d6-959d-430f-a502-437161f1fbab</string>
+          <string>d88996fd-e486-4b5f-9d6e-cd8f86e369e4</string>
+          <string>477b6260-f1b7-4306-9691-be45b7b0debe</string>
+          <string>d5a62b7a-b9f0-46f7-9c9c-ab0c241d9acf</string>
+          <string>ea2163a0-3787-4951-92f0-64dea4117732</string>
         </channelIds>
         <backgroundColor>
-          <red>255</red>
+          <red>128</red>
+          <green>128</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+      <channelTag>
+        <id>b761a5a7-5f3b-4cbc-bcfd-88fb4dda0197</id>
+        <name>xml</name>
+        <channelIds>
+          <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
+          <string>58351fae-3d17-4437-b048-4b48ce3809c0</string>
+          <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
+          <string>4f9678ab-87e1-4652-8055-d54decec2aa1</string>
+        </channelIds>
+        <backgroundColor>
+          <red>128</red>
           <green>0</green>
-          <blue>51</blue>
+          <blue>128</blue>
           <alpha>255</alpha>
         </backgroundColor>
       </channelTag>

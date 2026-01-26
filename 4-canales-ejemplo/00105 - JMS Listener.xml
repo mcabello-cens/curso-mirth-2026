@@ -1,23 +1,43 @@
 <channel version="4.5.2">
-  <id>67d912c4-47a5-42ba-be12-dd77ff24dec9</id>
+  <id>f11591a4-a387-4991-9901-0ac66f0f8a8d</id>
   <nextMetaDataId>2</nextMetaDataId>
-  <name>010 - LLP Server - Port 6001</name>
+  <name>00105 - JMS Listener</name>
   <description></description>
-  <revision>2</revision>
+  <revision>1</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.tcp.TcpReceiverProperties" version="4.5.2">
+    <properties class="com.mirth.connect.connectors.jms.JmsReceiverProperties" version="4.5.2">
       <pluginProperties/>
-      <listenerConnectorProperties version="4.5.2">
-        <host>0.0.0.0</host>
-        <port>6661</port>
-      </listenerConnectorProperties>
+      <useJndi>false</useJndi>
+      <jndiProviderUrl></jndiProviderUrl>
+      <jndiInitialContextFactory></jndiInitialContextFactory>
+      <jndiConnectionFactoryName></jndiConnectionFactoryName>
+      <connectionFactoryClass>org.apache.activemq.ActiveMQConnectionFactory</connectionFactoryClass>
+      <connectionProperties class="linked-hash-map">
+        <entry>
+          <string>brokerURL</string>
+          <string>failover:(tcp://localhost:61616)?maxReconnectAttempts=0</string>
+        </entry>
+        <entry>
+          <string>closeTimeout</string>
+          <string>15000</string>
+        </entry>
+        <entry>
+          <string>useCompression</string>
+          <string>no</string>
+        </entry>
+      </connectionProperties>
+      <username>admin</username>
+      <password>admin</password>
+      <destinationName></destinationName>
+      <topic>false</topic>
+      <clientId></clientId>
       <sourceConnectorProperties version="4.5.2">
-        <responseVariable>Auto-generate (After source transformer)</responseVariable>
+        <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
         <processBatch>false</processBatch>
-        <firstResponse>true</firstResponse>
+        <firstResponse>false</firstResponse>
         <processingThreads>1</processingThreads>
         <resourceIds class="linked-hash-map">
           <entry>
@@ -27,29 +47,9 @@
         </resourceIds>
         <queueBufferSize>1000</queueBufferSize>
       </sourceConnectorProperties>
-      <transmissionModeProperties class="com.mirth.connect.plugins.mllpmode.MLLPModeProperties">
-        <pluginPointName>MLLP</pluginPointName>
-        <startOfMessageBytes>0B</startOfMessageBytes>
-        <endOfMessageBytes>1C0D</endOfMessageBytes>
-        <useMLLPv2>false</useMLLPv2>
-        <ackBytes>06</ackBytes>
-        <nackBytes>15</nackBytes>
-        <maxRetries>2</maxRetries>
-      </transmissionModeProperties>
-      <serverMode>true</serverMode>
-      <remoteAddress></remoteAddress>
-      <remotePort></remotePort>
-      <overrideLocalBinding>false</overrideLocalBinding>
-      <reconnectInterval>5000</reconnectInterval>
-      <receiveTimeout>0</receiveTimeout>
-      <bufferSize>65536</bufferSize>
-      <maxConnections>10</maxConnections>
-      <keepConnectionOpen>true</keepConnectionOpen>
-      <dataTypeBinary>false</dataTypeBinary>
-      <charsetEncoding>UTF-8</charsetEncoding>
-      <respondOnNewConnection>0</respondOnNewConnection>
-      <responseAddress></responseAddress>
-      <responsePort></responsePort>
+      <selector></selector>
+      <reconnectIntervalMillis>10000</reconnectIntervalMillis>
+      <durableTopic>false</durableTopic>
     </properties>
     <transformer version="4.5.2">
       <elements/>
@@ -137,7 +137,7 @@
     <filter version="4.5.2">
       <elements/>
     </filter>
-    <transportName>TCP Listener</transportName>
+    <transportName>JMS Listener</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
     <waitForPrevious>true</waitForPrevious>
@@ -146,7 +146,7 @@
     <connector version="4.5.2">
       <metaDataId>1</metaDataId>
       <name>Destination 1</name>
-      <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
+      <properties class="com.mirth.connect.connectors.vm.VmDispatcherProperties" version="4.5.2">
         <pluginProperties/>
         <destinationConnectorProperties version="4.5.2">
           <queueEnabled>false</queueEnabled>
@@ -168,7 +168,9 @@
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>logger.info(&quot;LLP Server received message=&quot; + connectorMessage.getEncodedData());</script>
+        <channelId>none</channelId>
+        <channelTemplate>${message.encodedData}</channelTemplate>
+        <mapVariables/>
       </properties>
       <transformer version="4.5.2">
         <elements/>
@@ -339,7 +341,7 @@
       <filter version="4.5.2">
         <elements/>
       </filter>
-      <transportName>JavaScript Writer</transportName>
+      <transportName>Channel Writer</transportName>
       <mode>DESTINATION</mode>
       <enabled>true</enabled>
       <waitForPrevious>true</waitForPrevious>
@@ -392,9 +394,9 @@ return;</undeployScript>
   </properties>
   <exportData>
     <metadata>
-      <enabled>true</enabled>
+      <enabled>false</enabled>
       <lastModified>
-        <time>1769445730675</time>
+        <time>1769434267960</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
@@ -403,8 +405,28 @@ return;</undeployScript>
       </pruningSettings>
       <userId>1</userId>
     </metadata>
-    <dependentIds>
-      <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
-    </dependentIds>
+    <channelTags>
+      <channelTag>
+        <id>a179b685-0749-44a5-b995-970a0a889463</id>
+        <name>connectors</name>
+        <channelIds>
+          <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
+          <string>f11591a4-a387-4991-9901-0ac66f0f8a8d</string>
+          <string>c582b542-b52c-4c3a-a259-f1555333da8b</string>
+          <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
+          <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
+          <string>d88996fd-e486-4b5f-9d6e-cd8f86e369e4</string>
+          <string>477b6260-f1b7-4306-9691-be45b7b0debe</string>
+          <string>d5a62b7a-b9f0-46f7-9c9c-ab0c241d9acf</string>
+          <string>ea2163a0-3787-4951-92f0-64dea4117732</string>
+        </channelIds>
+        <backgroundColor>
+          <red>128</red>
+          <green>128</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </backgroundColor>
+      </channelTag>
+    </channelTags>
   </exportData>
 </channel>

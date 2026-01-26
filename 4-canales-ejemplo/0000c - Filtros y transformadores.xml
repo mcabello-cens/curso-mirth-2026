@@ -1,25 +1,16 @@
 <channel version="4.5.2">
-  <id>e610d5a0-33a1-4da0-ac05-d0597733e3bb</id>
-  <nextMetaDataId>6</nextMetaDataId>
-  <name>2020 - API Rest Interface v1</name>
-  <description>Implementa un DEMO endpoint GET /patients para consultar pacientes.
-La respuesta del endpoint es simulada.</description>
-  <revision>2</revision>
+  <id>58351fae-3d17-4437-b048-4b48ce3809c0</id>
+  <nextMetaDataId>2</nextMetaDataId>
+  <name>0000c - Filtros y transformadores</name>
+  <description></description>
+  <revision>3</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
-    <properties class="com.mirth.connect.connectors.http.HttpReceiverProperties" version="4.5.2">
-      <pluginProperties>
-        <com.mirth.connect.plugins.httpauth.NoneHttpAuthProperties version="4.5.2">
-  <authType>NONE</authType>
-        </com.mirth.connect.plugins.httpauth.NoneHttpAuthProperties>
-      </pluginProperties>
-      <listenerConnectorProperties version="4.5.2">
-        <host>0.0.0.0</host>
-        <port>9002</port>
-      </listenerConnectorProperties>
+    <properties class="com.mirth.connect.connectors.vm.VmReceiverProperties" version="4.5.2">
+      <pluginProperties/>
       <sourceConnectorProperties version="4.5.2">
-        <responseVariable>d1</responseVariable>
+        <responseVariable>None</responseVariable>
         <respondAfterProcessing>true</respondAfterProcessing>
         <processBatch>false</processBatch>
         <firstResponse>false</firstResponse>
@@ -32,41 +23,90 @@ La respuesta del endpoint es simulada.</description>
         </resourceIds>
         <queueBufferSize>1000</queueBufferSize>
       </sourceConnectorProperties>
-      <xmlBody>true</xmlBody>
-      <parseMultipart>true</parseMultipart>
-      <includeMetadata>true</includeMetadata>
-      <binaryMimeTypes>application/.*(?&lt;!json|xml)$|image/.*|video/.*|audio/.*</binaryMimeTypes>
-      <binaryMimeTypesRegex>true</binaryMimeTypesRegex>
-      <responseContentType>${responseContentType}</responseContentType>
-      <responseDataTypeBinary>false</responseDataTypeBinary>
-      <responseStatusCode>${responseCode}</responseStatusCode>
-      <responseHeaders class="linked-hash-map"/>
-      <responseHeadersVariable></responseHeadersVariable>
-      <useResponseHeadersVariable>false</useResponseHeadersVariable>
-      <charset>UTF-8</charset>
-      <contextPath>base/pacientes</contextPath>
-      <timeout>30000</timeout>
-      <staticResources/>
     </properties>
     <transformer version="4.5.2">
       <elements>
-        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
-          <name>Parse HTTP Request</name>
+        <com.mirth.connect.plugins.scriptfilestep.ExternalScriptStep version="4.5.2">
+          <name>invocar script externo</name>
           <sequenceNumber>0</sequenceNumber>
           <enabled>true</enabled>
-          <script>logger.info(connectorMessage.getRawData());
+          <scriptPath>/data/js/test.js</scriptPath>
+        </com.mirth.connect.plugins.scriptfilestep.ExternalScriptStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>nombre</name>
+          <sequenceNumber>1</sequenceNumber>
+          <enabled>true</enabled>
+          <variable>nombre</variable>
+          <mapping>msg[&apos;medicos_nombre&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>logger</name>
+          <sequenceNumber>2</sequenceNumber>
+          <enabled>true</enabled>
+          <script>logger.info(&apos;nombre=&apos; + $(&apos;nombre&apos;));
 
-var httpMethod = msg[&apos;Method&apos;].toString();
-var httpContextPath = msg[&apos;RequestContextPath&apos;].toString()
+// logger.info(&apos;nuevoSegmentoPID=&apos; + nuevoSegmentoPID);</script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        <com.mirth.connect.plugins.xsltstep.XsltStep version="4.5.2">
+          <name>XSLT</name>
+          <sequenceNumber>3</sequenceNumber>
+          <enabled>false</enabled>
+          <sourceXml>okok</sourceXml>
+          <resultVariable>okok</resultVariable>
+          <template></template>
+          <useCustomFactory>false</useCustomFactory>
+          <customFactory></customFactory>
+        </com.mirth.connect.plugins.xsltstep.XsltStep>
+        <com.mirth.connect.model.IteratorStep version="4.5.2">
+          <name>For each msg</name>
+          <sequenceNumber>4</sequenceNumber>
+          <enabled>false</enabled>
+          <properties>
+            <target>msg</target>
+            <indexVariable>i</indexVariable>
+            <prefixSubstitutions/>
+            <children/>
+          </properties>
+        </com.mirth.connect.model.IteratorStep>
+        <com.mirth.connect.plugins.destinationsetfilter.DestinationSetFilterStep version="4.5.2">
+          <name>Filter destination(s) if &quot;aaaa&quot; exists</name>
+          <sequenceNumber>5</sequenceNumber>
+          <enabled>false</enabled>
+          <behavior>REMOVE</behavior>
+          <metaDataIds/>
+          <field>aaaa</field>
+          <condition>EXISTS</condition>
+          <values/>
+        </com.mirth.connect.plugins.destinationsetfilter.DestinationSetFilterStep>
+        <com.mirth.connect.plugins.mapper.MapperStep version="4.5.2">
+          <name>medicos_apellido_paterno</name>
+          <sequenceNumber>6</sequenceNumber>
+          <enabled>true</enabled>
+          <variable>medicos_apellido_paterno</variable>
+          <mapping>msg[&apos;medicos_apellido_paterno&apos;].toString()</mapping>
+          <defaultValue></defaultValue>
+          <replacements/>
+          <scope>CHANNEL</scope>
+        </com.mirth.connect.plugins.mapper.MapperStep>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
+          <name>js para capturar apellido paterno</name>
+          <sequenceNumber>7</sequenceNumber>
+          <enabled>true</enabled>
+          <script>var mapping;
 
-channelMap.put(&quot;httpMethod&quot;, httpMethod);
-channelMap.put(&quot;httpContextPath&quot;, httpContextPath);
+try {
+    mapping = msg[&apos;medicos_apellido_paterno&apos;].toString();
+} catch (e) {
+    mapping = &apos;&apos;;
+}
 
-logger.info(&quot;httpMethod=&quot; + httpMethod);
-logger.info(&quot;httpContextPath=&quot; + httpContextPath);</script>
+channelMap.put(&apos;medicos_apellido_paterno&apos;, validate(mapping, &apos;&apos;, new Array()));</script>
         </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
       </elements>
-      <inboundTemplate encoding="base64">PEh0dHBSZXF1ZXN0PgogICAgPFJlbW90ZUFkZHJlc3M+MTkyLjE2OC4xMC4xPC9SZW1vdGVBZGRyZXNzPgogICAgPFJlcXVlc3RVcmw+aHR0cDovLzE5Mi4xNjguMTAuMTMxOjkwMDIvYmFzZS9wYWNpZW50ZXMvPC9SZXF1ZXN0VXJsPgogICAgPE1ldGhvZD5QT1NUPC9NZXRob2Q+CiAgICA8UmVxdWVzdFBhdGg+ZG9iPTEyMzwvUmVxdWVzdFBhdGg+CiAgICA8UmVxdWVzdENvbnRleHRQYXRoPi9iYXNlL3BhY2llbnRlcy88L1JlcXVlc3RDb250ZXh0UGF0aD4KICAgIDxQYXJhbWV0ZXJzPgogICAgICAgIDxkb2I+MTIzPC9kb2I+CiAgICA8L1BhcmFtZXRlcnM+CiAgICA8SGVhZGVyPgogICAgICAgIDxBY2NlcHQ+Ki8qPC9BY2NlcHQ+CiAgICAgICAgPENhY2hlLUNvbnRyb2w+bm8tY2FjaGU8L0NhY2hlLUNvbnRyb2w+CiAgICAgICAgPFVzZXItQWdlbnQ+UG9zdG1hblJ1bnRpbWUvNy41MS4wPC9Vc2VyLUFnZW50PgogICAgICAgIDxDb25uZWN0aW9uPmtlZXAtYWxpdmU8L0Nvbm5lY3Rpb24+CiAgICAgICAgPFBvc3RtYW4tVG9rZW4+YTEwYTZjYzUtMjA3NC00NWJjLTg5Y2YtMmI4YTQ0MWY0NzAxPC9Qb3N0bWFuLVRva2VuPgogICAgICAgIDxIb3N0PjE5Mi4xNjguMTAuMTMxOjkwMDI8L0hvc3Q+CiAgICAgICAgPEFjY2VwdC1FbmNvZGluZz5nemlwLCBkZWZsYXRlLCBicjwvQWNjZXB0LUVuY29kaW5nPgogICAgICAgIDxDb250ZW50LUxlbmd0aD40NDwvQ29udGVudC1MZW5ndGg+CiAgICAgICAgPENvbnRlbnQtVHlwZT5hcHBsaWNhdGlvbi9qc29uPC9Db250ZW50LVR5cGU+CiAgICA8L0hlYWRlcj4KICAgIDxDb250ZW50IG11bHRpcGFydD0ibm8iPnsmIzEzOwogICAgIm5vbWJyZSI6ICJBbmEiLCYjMTM7CiAgICAiZWRhZCI6ICIzMSImIzEzOwp9PC9Db250ZW50Pgo8L0h0dHBSZXF1ZXN0Pgo=</inboundTemplate>
+      <inboundTemplate encoding="base64">PHJlc3VsdD4NCiAgICA8bWVkaWNvc19pZD4yPC9tZWRpY29zX2lkPg0KICAgIDxtZWRpY29zX3JucGk+Uk5QSS0wMDI8L21lZGljb3Nfcm5waT4NCiAgICA8bWVkaWNvc19ub21icmU+QW5hPC9tZWRpY29zX25vbWJyZT4NCiAgICA8bWVkaWNvc19hcGVsbGlkb19wYXRlcm5vPlRvcnJlczwvbWVkaWNvc19hcGVsbGlkb19wYXRlcm5vPg0KICAgIDxtZWRpY29zX2FwZWxsaWRvX21hdGVybm8+R8OzbWV6PC9tZWRpY29zX2FwZWxsaWRvX21hdGVybm8+DQogICAgPG1lZGljb3NfdGVsZWZvbm8+MzMzNDQ0PC9tZWRpY29zX3RlbGVmb25vPg0KICAgIDxtZWRpY29zX2VtYWlsPmFuYS50b3JyZXNAZWplbXBsby5jbDwvbWVkaWNvc19lbWFpbD4NCiAgICA8bWVkaWNvc19lc3BlY2lhbGlkYWRfaWQ+MjwvbWVkaWNvc19lc3BlY2lhbGlkYWRfaWQ+DQo8L3Jlc3VsdD4N</inboundTemplate>
       <outboundTemplate encoding="base64"></outboundTemplate>
       <inboundDataType>XML</inboundDataType>
       <outboundDataType>XML</outboundDataType>
@@ -96,9 +136,19 @@ logger.info(&quot;httpContextPath=&quot; + httpContextPath);</script>
       </outboundProperties>
     </transformer>
     <filter version="4.5.2">
-      <elements/>
+      <elements>
+        <com.mirth.connect.plugins.javascriptrule.JavaScriptRule version="4.5.2">
+          <name>filtrar medicos por especialidad</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>true</enabled>
+          <script>if (msg[&apos;medicos_especialidad_id&apos;].toString() == &apos;2&apos;) {
+    return true;
+}
+return false;</script>
+        </com.mirth.connect.plugins.javascriptrule.JavaScriptRule>
+      </elements>
     </filter>
-    <transportName>HTTP Listener</transportName>
+    <transportName>Channel Reader</transportName>
     <mode>SOURCE</mode>
     <enabled>true</enabled>
     <waitForPrevious>true</waitForPrevious>
@@ -106,7 +156,7 @@ logger.info(&quot;httpContextPath=&quot; + httpContextPath);</script>
   <destinationConnectors>
     <connector version="4.5.2">
       <metaDataId>1</metaDataId>
-      <name>Get all patients</name>
+      <name>Destination 1</name>
       <properties class="com.mirth.connect.connectors.js.JavaScriptDispatcherProperties" version="4.5.2">
         <pluginProperties/>
         <destinationConnectorProperties version="4.5.2">
@@ -129,40 +179,14 @@ logger.info(&quot;httpContextPath=&quot; + httpContextPath);</script>
           <queueBufferSize>1000</queueBufferSize>
           <reattachAttachments>true</reattachAttachments>
         </destinationConnectorProperties>
-        <script>var patients = [];
-
-var patient1 = {
-	id: 1, 
-	firstName: &quot;Doe&quot;,
-	lastName: &quot;John&quot;,
-	gender: &quot;male&quot;,
-	birthday: &quot;01-01-1980&quot;
-};
-var patient2 = {
-	id: 1, 
-	firstName: &quot;Chalmers&quot;,
-	lastName: &quot;Anna&quot;,
-	gender: &quot;female&quot;,
-	birthday: &quot;06-06-1985&quot;	
-};
-
-patients.push(patient1);
-patients.push(patient2);
-
-var responseBody = JSON.stringify(patients);
-logger.info(&quot;responseBody=&quot; + responseBody);
-
-channelMap.put(&apos;responseContentType&apos;, &apos;application/json&apos;);
-channelMap.put(&apos;responseCode&apos;, &apos;200&apos;);
-
-return responseBody;</script>
+        <script>logger.info(&apos;Destination1=&apos; + connectorMessage.getEncodedData());</script>
       </properties>
       <transformer version="4.5.2">
         <elements/>
         <inboundTemplate encoding="base64"></inboundTemplate>
         <outboundTemplate encoding="base64"></outboundTemplate>
         <inboundDataType>XML</inboundDataType>
-        <outboundDataType>JSON</outboundDataType>
+        <outboundDataType>XML</outboundDataType>
         <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
           <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
             <stripNamespaces>false</stripNamespaces>
@@ -175,26 +199,46 @@ return responseBody;</script>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
-            <splitType>JavaScript</splitType>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
+            <stripNamespaces>false</stripNamespaces>
+          </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
             <batchScript></batchScript>
           </batchProperties>
         </outboundProperties>
       </transformer>
       <responseTransformer version="4.5.2">
         <elements/>
-        <inboundDataType>JSON</inboundDataType>
-        <outboundDataType>JSON</outboundDataType>
-        <inboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
-            <splitType>JavaScript</splitType>
+        <inboundTemplate encoding="base64"></inboundTemplate>
+        <outboundTemplate encoding="base64"></outboundTemplate>
+        <inboundDataType>XML</inboundDataType>
+        <outboundDataType>XML</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
+            <stripNamespaces>false</stripNamespaces>
+          </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
             <batchScript></batchScript>
           </batchProperties>
         </inboundProperties>
-        <outboundProperties class="com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties" version="4.5.2">
-          <batchProperties class="com.mirth.connect.plugins.datatypes.json.JSONBatchProperties" version="4.5.2">
-            <splitType>JavaScript</splitType>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties" version="4.5.2">
+          <serializationProperties class="com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties" version="4.5.2">
+            <stripNamespaces>false</stripNamespaces>
+          </serializationProperties>
+          <batchProperties class="com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties" version="4.5.2">
+            <splitType>Element_Name</splitType>
+            <elementName></elementName>
+            <level>1</level>
+            <query></query>
             <batchScript></batchScript>
           </batchProperties>
         </outboundProperties>
@@ -221,7 +265,7 @@ return;</deployScript>
 return;</undeployScript>
   <properties version="4.5.2">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
-    <messageStorageMode>PRODUCTION</messageStorageMode>
+    <messageStorageMode>DEVELOPMENT</messageStorageMode>
     <encryptData>false</encryptData>
     <encryptAttachments>false</encryptAttachments>
     <encryptCustomMetaData>false</encryptCustomMetaData>
@@ -257,7 +301,7 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769448136331</time>
+        <time>1769433747551</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
@@ -289,19 +333,18 @@ return;</undeployScript>
         </backgroundColor>
       </channelTag>
       <channelTag>
-        <id>990d1c33-74c6-45e7-9278-fadfa91a8c43</id>
-        <name>REST</name>
+        <id>b761a5a7-5f3b-4cbc-bcfd-88fb4dda0197</id>
+        <name>xml</name>
         <channelIds>
-          <string>4c783b83-4620-4d9f-9d0d-ab68ad92a4fa</string>
-          <string>881a6aef-8f85-4a61-b07e-47f556a91655</string>
-          <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
-          <string>1e61610b-a229-44da-bb44-7888dc780213</string>
-          <string>e610d5a0-33a1-4da0-ac05-d0597733e3bb</string>
+          <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
+          <string>58351fae-3d17-4437-b048-4b48ce3809c0</string>
+          <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
+          <string>4f9678ab-87e1-4652-8055-d54decec2aa1</string>
         </channelIds>
         <backgroundColor>
-          <red>255</red>
-          <green>255</green>
-          <blue>0</blue>
+          <red>128</red>
+          <green>0</green>
+          <blue>128</blue>
           <alpha>255</alpha>
         </backgroundColor>
       </channelTag>
