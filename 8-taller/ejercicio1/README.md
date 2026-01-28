@@ -5,7 +5,7 @@ A partir de un mensaje desde archivo de texto delimitado construya un canal que 
 
 ## Origen
 
-* Desde la ubicación c:\data\source se procesarán los archivos de texto. (File Reader)
+* Desde la ubicación **c:\data\source** se procesarán los archivos de texto. (File Reader)
 
 * Obtener los elementos rut, nombre, apellido y nacimiento del archivo de texto
 
@@ -15,7 +15,7 @@ A partir de un mensaje desde archivo de texto delimitado construya un canal que 
 
 * Hacer POST del recurso Patient en un servidor FHIR (HTTP Sender)
 
-* Mover el archivo a la carpeta c:\data\target (File Writer)
+* Mover el archivo a la carpeta **c:\data\target** (File Writer)
 
 
 ### Datos de origen
