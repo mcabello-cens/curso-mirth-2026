@@ -69,3 +69,12 @@ services:
       retries: 10
       start_period: 30s
       timeout: 5s
+      
+     
+  hapi-fhir:
+    image: hapiproject/hapi:v7.0.2
+    container_name: hapi-fhir
+    networks:
+      - mirth-demo
+    ports:
+      - "9000:8080"
