@@ -18,7 +18,7 @@
     &quot;lastName&quot;: &quot;Perez&quot;
   }
 }</description>
-  <revision>6</revision>
+  <revision>7</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -44,7 +44,7 @@
         <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
           <name>Router</name>
           <sequenceNumber>0</sequenceNumber>
-          <enabled>false</enabled>
+          <enabled>true</enabled>
           <script>var messageString = JSON.stringify( msg );
 
 var destination = msg[&apos;destination&apos;][&apos;identifier&apos;];
@@ -70,7 +70,7 @@ if (destination == HOSP_B)
         <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.2">
           <name>Router switch case</name>
           <sequenceNumber>1</sequenceNumber>
-          <enabled>true</enabled>
+          <enabled>false</enabled>
           <script>var messageString = JSON.stringify( msg );
 
 var destination = msg[&apos;destination&apos;][&apos;identifier&apos;];
@@ -274,7 +274,7 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769444692674</time>
+        <time>1769469313142</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>

@@ -1,15 +1,15 @@
 <codeTemplateLibrary version="4.5.2">
-  <id>2339d408-df4d-4866-abe3-44bb63eb100d</id>
-  <name>CURSO MIRTH 2026</name>
-  <revision>4</revision>
+  <id>f61079c9-23c2-499f-ade5-0fbd64b51b0c</id>
+  <name>Curso Mirth - Librerias</name>
+  <revision>6</revision>
   <lastModified>
-    <time>1769459907532</time>
+    <time>1770088326900</time>
     <timezone>Etc/UTC</timezone>
   </lastModified>
   <description></description>
   <includeNewChannels>false</includeNewChannels>
   <enabledChannelIds>
-    <string>62499f89-9b58-4c3f-9f7a-92e7a031826c</string>
+    <string>9f14bb6b-421d-4b2b-a36e-be77b3fa999d</string>
   </enabledChannelIds>
   <disabledChannelIds>
     <string>e915c676-824e-45f6-b4a3-f4979c355266</string>
@@ -17,11 +17,13 @@
     <string>ba6cb940-817f-41e8-8fd7-849a8833b9c9</string>
     <string>22b2bfb6-6703-4446-8c02-f14eb5a230c5</string>
     <string>6ae7b2c6-fcc0-4399-bbd7-e516d596ade6</string>
+    <string>2d132edb-b412-46cf-b1d4-847b778f78aa</string>
     <string>41e75289-b1ee-4444-95bc-2e369575a34f</string>
     <string>713196e0-52ab-4f9a-9101-afa89bca152e</string>
     <string>becf6e89-ec2b-4e54-b819-8ce758341a48</string>
     <string>ead6e735-1ed0-4334-9f5b-8f40761aa1f5</string>
     <string>f5066aba-9341-4927-a952-451a197b076c</string>
+    <string>1faf5058-8319-4b08-bcdd-2999c7f697a6</string>
     <string>8d65a648-14b3-44f0-ab75-ff53f30cfc62</string>
     <string>ea2163a0-3787-4951-92f0-64dea4117732</string>
     <string>4f9678ab-87e1-4652-8055-d54decec2aa1</string>
@@ -42,16 +44,19 @@
     <string>7c826555-a4e8-46e5-b749-1e099eefb742</string>
     <string>6330fdcb-ab53-4ab3-bdc4-13d6cba4dbcd</string>
     <string>47f25c2b-b347-4c08-8202-2b7f49eff283</string>
-    <string>9f14bb6b-421d-4b2b-a36e-be77b3fa999d</string>
     <string>56d576ed-9a33-4efe-b200-30d10b1e5b5d</string>
     <string>c5b4ad3c-eea5-4717-bee6-c203ddf28549</string>
     <string>d7c717f8-bb6e-4ff4-8628-d87c6aaeb23d</string>
+    <string>c628a346-97a5-44b6-bbc5-d1ecbab259e7</string>
     <string>1e61610b-a229-44da-bb44-7888dc780213</string>
     <string>4ce3cb61-5563-4e93-ac58-628dc5b9fc89</string>
     <string>17a2d374-8791-4075-a6d6-c07c74ea9024</string>
     <string>6748bfe4-cb40-469a-bee3-b30128c7fb88</string>
     <string>3f2551d3-1bc0-4586-8e25-cc702c4c4305</string>
+    <string>a72fb065-aa23-46d2-b4a2-fb00c545aafc</string>
     <string>8f47fbaf-5fb3-4143-99fa-c5088748053c</string>
+    <string>bc9d5e23-4d89-45bf-83e1-dd2746ed4fb9</string>
+    <string>62499f89-9b58-4c3f-9f7a-92e7a031826c</string>
     <string>7634f73d-cf74-4d92-9d7e-c93022f28832</string>
     <string>2f25ad07-5cea-4cbd-8a01-7c48fe6d50a4</string>
     <string>f4fbb43c-34d0-48d0-ae50-029d392fddf0</string>
@@ -61,6 +66,7 @@
     <string>e610d5a0-33a1-4da0-ac05-d0597733e3bb</string>
     <string>c9b6926b-bd4b-493f-b30f-d419db361fc9</string>
     <string>cb705267-e5fd-47ee-b431-5e4ba4c1df9a</string>
+    <string>7a2503c8-6969-4554-b08f-bf3e20a682d7</string>
     <string>b87963e1-648e-4364-9f0b-ad24490cb9df</string>
     <string>a2811665-c1fd-4ead-b7ad-ffb5dcc00c73</string>
     <string>745777b1-da8c-44a1-87d0-c001ead9834f</string>
@@ -71,35 +77,68 @@
     <string>c582b542-b52c-4c3a-a259-f1555333da8b</string>
     <string>1661c73e-47d5-42ba-9671-1b8398dba2b3</string>
     <string>f41d1823-91e7-4c85-bbce-961e3a34be06</string>
+    <string>e04a6bec-b528-4236-8f74-47c3e7810934</string>
     <string>dfd034fa-bbcd-4bc7-bea5-22311d02c195</string>
     <string>01d31491-3642-4c15-90aa-1aa020a1e176</string>
   </disabledChannelIds>
   <codeTemplates>
     <codeTemplate version="4.5.2">
-      <id>c4e00eaa-076c-495b-82ca-99dcfd92650a</id>
-      <name>cl.cens.functions.helloWorld()</name>
-      <revision>1</revision>
+      <id>86a6d387-4eaa-4a04-942c-adce1e421101</id>
+      <name>myfunctions</name>
+      <revision>2</revision>
       <lastModified>
-        <time>1769384994043</time>
+        <time>1769385531945</time>
         <timezone>Etc/UTC</timezone>
       </lastModified>
       <contextSet>
         <delegate>
-          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>DESTINATION_DISPATCHER</contextType>
+          <contextType>DESTINATION_RESPONSE_TRANSFORMER</contextType>
           <contextType>SOURCE_RECEIVER</contextType>
+          <contextType>SOURCE_FILTER_TRANSFORMER</contextType>
+          <contextType>DESTINATION_FILTER_TRANSFORMER</contextType>
         </delegate>
       </contextSet>
       <properties class="com.mirth.connect.model.codetemplates.BasicCodeTemplateProperties">
         <type>FUNCTION</type>
-        <code>/**
-	Función de demostración
+        <code>var myFunctions = (function () {
+    /**
+     * Ejemplo function 1
+     *
+     * @param {string} value - a test value
+     * @returns {string} - function 1 response
+     */
+    function f1(value) {
+        return &quot;function 1&quot;;
+    }
 
-	@param {String} value - Un valor de entrada
-	@return {String} value - Valor devuelto por la función
-*/
-function helloWorld(value) {
-	return &quot;Hola Mundo!!!!&quot;;
-}</code>
+    /**
+     * Ejemplo function 1
+     *
+     * @param {string} value - a test value
+     * @returns {string} - function 2 response
+     */
+    function f2(value) {
+        return &quot;function 2&quot;;
+    }
+
+    /**
+     * Ejemplo function 3
+     *
+     * @param {string} value - a test value
+     * @returns {string} - function 1 response
+     */
+    function f3(value) {
+        return &quot;function 3&quot;;
+    }
+
+    // Exponer funciones públicas
+    return {
+        f1: f1,
+        f2: f2,
+        f3: f3
+    };
+})();</code>
       </properties>
     </codeTemplate>
   </codeTemplates>

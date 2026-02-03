@@ -378,6 +378,9 @@ return;</undeployScript>
       </pruningSettings>
       <userId>1</userId>
     </metadata>
+    <dependentIds>
+      <string>0a5deb46-9627-4fe5-85ee-63fae2917f8b</string>
+    </dependentIds>
     <channelTags>
       <channelTag>
         <id>3446eb5e-3f93-41c1-a6a3-b72531348a14</id>

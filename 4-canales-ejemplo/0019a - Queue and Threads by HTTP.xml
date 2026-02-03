@@ -3,7 +3,7 @@
   <nextMetaDataId>3</nextMetaDataId>
   <name>0019a - Queue and Threads by HTTP</name>
   <description></description>
-  <revision>13</revision>
+  <revision>14</revision>
   <sourceConnector version="4.5.2">
     <metaDataId>0</metaDataId>
     <name>sourceConnector</name>
@@ -295,7 +295,7 @@ return;</deployScript>
 return;</undeployScript>
   <properties version="4.5.2">
     <clearGlobalChannelMap>true</clearGlobalChannelMap>
-    <messageStorageMode>DEVELOPMENT</messageStorageMode>
+    <messageStorageMode>PRODUCTION</messageStorageMode>
     <encryptData>false</encryptData>
     <encryptAttachments>false</encryptAttachments>
     <encryptCustomMetaData>false</encryptCustomMetaData>
@@ -331,7 +331,7 @@ return;</undeployScript>
     <metadata>
       <enabled>true</enabled>
       <lastModified>
-        <time>1769399329246</time>
+        <time>1769464259772</time>
         <timezone>America/Santiago</timezone>
       </lastModified>
       <pruningSettings>
